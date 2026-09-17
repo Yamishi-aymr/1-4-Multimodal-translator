@@ -11,6 +11,9 @@ const IMAGE_API_URL =
 const DOCUMENT_API_URL =
     "https://1-4-multimodal-translator.vercel.app/api/document";
 
+const AUDIO_API_URL =
+    "https://1-4-multimodal-translator.vercel.app/api/audio";
+
 
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_MESSAGES = 8;
@@ -20,6 +23,9 @@ const MAX_IMAGE_SIZE =
 
 const MAX_DOCUMENT_SIZE =
     2 * 1024 * 1024;
+
+const MAX_AUDIO_SIZE =
+    3 * 1024 * 1024;
 
 
 const ALLOWED_IMAGE_TYPES = [
@@ -40,6 +46,26 @@ const ALLOWED_DOCUMENT_TYPES = [
     "application/pdf",
     "text/plain",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+];
+
+
+const ALLOWED_AUDIO_EXTENSIONS = [
+    ".mp3",
+    ".wav",
+    ".m4a",
+    ".webm"
+];
+
+
+const ALLOWED_AUDIO_TYPES = [
+    "audio/mpeg",
+    "audio/mp3",
+    "audio/wav",
+    "audio/x-wav",
+    "audio/mp4",
+    "audio/x-m4a",
+    "audio/webm",
+    "video/webm"
 ];
 
 
@@ -1629,6 +1655,1016 @@ class ImageTranslationApp {
 
 
 /* ============================================================
+   CLASE PARA TRADUCCIÓN DE AUDIO
+============================================================ */
+
+class AudioTranslationApp {
+
+    constructor() {
+
+        this.form =
+            document.getElementById(
+                "audioForm"
+            );
+
+        this.fileInput =
+            document.getElementById(
+                "audioInput"
+            );
+
+        this.sourceLanguage =
+            document.getElementById(
+                "audioSourceLanguage"
+            );
+
+        this.targetLanguage =
+            document.getElementById(
+                "audioTargetLanguage"
+            );
+
+        this.swapButton =
+            document.getElementById(
+                "audioSwapLanguagesButton"
+            );
+
+        this.translationDirection =
+            document.getElementById(
+                "audioTranslationDirection"
+            );
+
+        this.translateButton =
+            document.getElementById(
+                "audioTranslateButton"
+            );
+
+        this.formMessage =
+            document.getElementById(
+                "audioFormMessage"
+            );
+
+
+        /* ====================================================
+           INFORMACIÓN DEL AUDIO
+        ==================================================== */
+
+        this.filePlaceholder =
+            document.getElementById(
+                "audioFilePlaceholder"
+            );
+
+        this.fileInfo =
+            document.getElementById(
+                "audioFileInfo"
+            );
+
+        this.fileName =
+            document.getElementById(
+                "audioFileName"
+            );
+
+        this.fileSize =
+            document.getElementById(
+                "audioFileSize"
+            );
+
+        this.preview =
+            document.getElementById(
+                "audioPreview"
+            );
+
+
+        /* ====================================================
+           RESULTADOS
+        ==================================================== */
+
+        this.results =
+            document.getElementById(
+                "audioResults"
+            );
+
+        this.processedFileName =
+            document.getElementById(
+                "processedAudioName"
+            );
+
+        this.transcription =
+            document.getElementById(
+                "audioTranscription"
+            );
+
+        this.translatedText =
+            document.getElementById(
+                "audioTranslatedText"
+            );
+
+        this.detectedLanguage =
+            document.getElementById(
+                "detectedAudioLanguage"
+            );
+
+        this.warning =
+            document.getElementById(
+                "audioWarning"
+            );
+
+
+        /* ====================================================
+           ESTADO GLOBAL
+        ==================================================== */
+
+        this.statusText =
+            document.getElementById(
+                "statusText"
+            );
+
+        this.statusIndicator =
+            document.getElementById(
+                "statusIndicator"
+            );
+
+
+        this.audioData = "";
+
+        this.selectedFile = null;
+
+        this.previewUrl = null;
+
+
+        this.languageNames = {
+            es: "Español",
+            en: "English",
+            unknown: "No identificado"
+        };
+
+
+        this.initialize();
+    }
+
+
+    /* ========================================================
+       INICIALIZAR
+    ======================================================== */
+
+    initialize() {
+
+        this.fileInput.addEventListener(
+            "change",
+            () => {
+
+                this.handleFileSelection();
+            }
+        );
+
+
+        this.form.addEventListener(
+            "submit",
+            (event) => {
+
+                this.handleSubmit(
+                    event
+                );
+            }
+        );
+
+
+        this.swapButton.addEventListener(
+            "click",
+            () => {
+
+                this.swapLanguages();
+            }
+        );
+
+
+        this.sourceLanguage.addEventListener(
+            "change",
+            () => {
+
+                this.handleSourceLanguageChange();
+            }
+        );
+
+
+        this.targetLanguage.addEventListener(
+            "change",
+            () => {
+
+                this.handleTargetLanguageChange();
+            }
+        );
+
+
+        this.updateLanguageDirection();
+    }
+
+
+    /* ========================================================
+       IDIOMA ORIGEN
+    ======================================================== */
+
+    handleSourceLanguageChange() {
+
+        if (
+            this.sourceLanguage.value ===
+            this.targetLanguage.value
+        ) {
+
+            this.targetLanguage.value =
+                this.sourceLanguage.value === "es"
+                    ? "en"
+                    : "es";
+        }
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       IDIOMA DESTINO
+    ======================================================== */
+
+    handleTargetLanguageChange() {
+
+        if (
+            this.sourceLanguage.value ===
+            this.targetLanguage.value
+        ) {
+
+            this.sourceLanguage.value =
+                this.targetLanguage.value === "es"
+                    ? "en"
+                    : "es";
+        }
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       INTERCAMBIAR IDIOMAS
+    ======================================================== */
+
+    swapLanguages() {
+
+        const source =
+            this.sourceLanguage.value;
+
+
+        this.sourceLanguage.value =
+            this.targetLanguage.value;
+
+        this.targetLanguage.value =
+            source;
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       DIRECCIÓN
+    ======================================================== */
+
+    updateLanguageDirection() {
+
+        const sourceName =
+            this.languageNames[
+                this.sourceLanguage.value
+            ];
+
+        const targetName =
+            this.languageNames[
+                this.targetLanguage.value
+            ];
+
+
+        this.translationDirection.textContent =
+            `${sourceName} → ${targetName}`;
+    }
+
+
+    /* ========================================================
+       SELECCIONAR AUDIO
+    ======================================================== */
+
+    handleFileSelection() {
+
+        this.showFormMessage();
+
+        this.clearResults();
+
+        this.resetSelectedFile();
+
+
+        const file =
+            this.fileInput.files[0];
+
+
+        if (!file) {
+
+            return;
+        }
+
+
+        const extension =
+            this.getFileExtension(
+                file.name
+            );
+
+
+        if (
+            !ALLOWED_AUDIO_EXTENSIONS.includes(
+                extension
+            )
+        ) {
+
+            this.showFormMessage(
+                "Formato no permitido. Usa MP3, WAV, M4A o WebM."
+            );
+
+
+            this.fileInput.value = "";
+
+            return;
+        }
+
+
+        if (
+            file.type &&
+            !ALLOWED_AUDIO_TYPES.includes(
+                file.type
+            )
+        ) {
+
+            this.showFormMessage(
+                "El tipo de archivo de audio no es válido."
+            );
+
+
+            this.fileInput.value = "";
+
+            return;
+        }
+
+
+        if (
+            file.size >
+            MAX_AUDIO_SIZE
+        ) {
+
+            this.showFormMessage(
+                "El audio debe pesar como máximo 3 MB."
+            );
+
+
+            this.fileInput.value = "";
+
+            return;
+        }
+
+
+        if (file.size === 0) {
+
+            this.showFormMessage(
+                "El archivo de audio está vacío."
+            );
+
+
+            this.fileInput.value = "";
+
+            return;
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            () => {
+
+                this.audioData =
+                    reader.result;
+
+                this.selectedFile =
+                    file;
+
+
+                this.showFileInformation(
+                    file
+                );
+
+
+                this.setAudioPreview(
+                    file
+                );
+
+
+                this.translateButton.disabled =
+                    false;
+
+
+                this.setStatus(
+                    "ready",
+                    "Audio listo"
+                );
+            };
+
+
+        reader.onerror =
+            () => {
+
+                this.resetSelectedFile();
+
+                this.fileInput.value = "";
+
+
+                this.showFormMessage(
+                    "No fue posible leer el archivo de audio."
+                );
+
+
+                this.setStatus(
+                    "error",
+                    "Error"
+                );
+            };
+
+
+        reader.readAsDataURL(
+            file
+        );
+    }
+
+
+    /* ========================================================
+       EXTENSIÓN
+    ======================================================== */
+
+    getFileExtension(filename) {
+
+        const lastDot =
+            filename.lastIndexOf(".");
+
+
+        if (lastDot === -1) {
+
+            return "";
+        }
+
+
+        return filename
+            .slice(lastDot)
+            .toLowerCase();
+    }
+
+
+    /* ========================================================
+       INFORMACIÓN DEL AUDIO
+    ======================================================== */
+
+    showFileInformation(file) {
+
+        this.filePlaceholder.classList.add(
+            "d-none"
+        );
+
+
+        this.fileInfo.classList.remove(
+            "d-none"
+        );
+
+
+        this.fileName.textContent =
+            file.name;
+
+
+        this.fileSize.textContent =
+            this.formatFileSize(
+                file.size
+            );
+    }
+
+
+    /* ========================================================
+       REPRODUCTOR
+    ======================================================== */
+
+    setAudioPreview(file) {
+
+        if (this.previewUrl) {
+
+            URL.revokeObjectURL(
+                this.previewUrl
+            );
+        }
+
+
+        this.previewUrl =
+            URL.createObjectURL(
+                file
+            );
+
+
+        this.preview.src =
+            this.previewUrl;
+
+
+        this.preview.load();
+    }
+
+
+    /* ========================================================
+       FORMATEAR TAMAÑO
+    ======================================================== */
+
+    formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+
+            return `${bytes} bytes`;
+        }
+
+
+        if (
+            bytes <
+            1024 * 1024
+        ) {
+
+            return `${
+                (
+                    bytes / 1024
+                ).toFixed(1)
+            } KB`;
+        }
+
+
+        return `${
+            (
+                bytes /
+                (1024 * 1024)
+            ).toFixed(2)
+        } MB`;
+    }
+
+
+    /* ========================================================
+       RESTABLECER AUDIO
+    ======================================================== */
+
+    resetSelectedFile() {
+
+        this.audioData = "";
+
+        this.selectedFile = null;
+
+
+        this.translateButton.disabled =
+            true;
+
+
+        this.fileInfo.classList.add(
+            "d-none"
+        );
+
+
+        this.filePlaceholder.classList.remove(
+            "d-none"
+        );
+
+
+        this.fileName.textContent = "-";
+
+        this.fileSize.textContent = "-";
+
+
+        if (this.preview) {
+
+            this.preview.pause();
+
+            this.preview.removeAttribute(
+                "src"
+            );
+
+            this.preview.load();
+        }
+
+
+        if (this.previewUrl) {
+
+            URL.revokeObjectURL(
+                this.previewUrl
+            );
+
+            this.previewUrl = null;
+        }
+    }
+
+
+    /* ========================================================
+       ENVIAR AUDIO
+    ======================================================== */
+
+    async handleSubmit(event) {
+
+        event.preventDefault();
+
+        this.showFormMessage();
+
+        this.clearResults();
+
+
+        if (
+            !this.audioData ||
+            !this.selectedFile
+        ) {
+
+            this.showFormMessage(
+                "Selecciona un audio antes de traducir."
+            );
+
+            return;
+        }
+
+
+        const source =
+            this.sourceLanguage.value;
+
+        const target =
+            this.targetLanguage.value;
+
+
+        if (source === target) {
+
+            this.showFormMessage(
+                "El idioma de origen y destino deben ser diferentes."
+            );
+
+            return;
+        }
+
+
+        this.setLoading(
+            true
+        );
+
+
+        this.setStatus(
+            "loading",
+            "Transcribiendo audio..."
+        );
+
+
+        try {
+
+            const validMimeType =
+                ALLOWED_AUDIO_TYPES.includes(
+                    this.selectedFile.type
+                )
+                    ? this.selectedFile.type
+                    : "";
+
+
+            const response =
+                await fetch(
+                    AUDIO_API_URL,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                audio_data:
+                                    this.audioData,
+
+                                filename:
+                                    this.selectedFile.name,
+
+                                mime_type:
+                                    validMimeType,
+
+                                source_language:
+                                    source,
+
+                                target_language:
+                                    target
+                            })
+                    }
+                );
+
+
+            let data;
+
+
+            try {
+
+                data =
+                    await response.json();
+
+            }
+            catch {
+
+                throw new Error(
+                    "El servidor devolvió una respuesta no válida."
+                );
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    "No fue posible traducir el audio."
+                );
+            }
+
+
+            if (!data.has_speech) {
+
+                this.results.classList.remove(
+                    "d-none"
+                );
+
+
+                this.processedFileName.textContent =
+                    data.filename ||
+                    this.selectedFile.name;
+
+
+                this.transcription.textContent =
+                    "No se detectó voz comprensible en el audio.";
+
+
+                this.translatedText.textContent =
+                    "No hay contenido disponible para traducir.";
+
+
+                this.detectedLanguage.textContent =
+                    this.languageNames[
+                        data.detected_language
+                    ] ||
+                    "No identificado";
+
+
+                this.showWarning(
+                    data.warning ||
+                    "No se detectó voz comprensible en el audio."
+                );
+
+
+                this.setStatus(
+                    "ready",
+                    "Análisis terminado"
+                );
+
+
+                this.scrollToResults();
+
+                return;
+            }
+
+
+            this.results.classList.remove(
+                "d-none"
+            );
+
+
+            this.processedFileName.textContent =
+                data.filename ||
+                this.selectedFile.name;
+
+
+            this.transcription.textContent =
+                data.transcription ||
+                "No se recibió la transcripción.";
+
+
+            this.translatedText.textContent =
+                data.translation ||
+                "No se recibió una traducción.";
+
+
+            this.detectedLanguage.textContent =
+                this.languageNames[
+                    data.detected_language
+                ] ||
+                "No identificado";
+
+
+            if (
+                data.warning &&
+                data.warning.trim()
+            ) {
+
+                this.showWarning(
+                    data.warning
+                );
+
+            }
+            else {
+
+                this.hideWarning();
+            }
+
+
+            this.setStatus(
+                "ready",
+                "Audio traducido"
+            );
+
+
+            this.scrollToResults();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error al traducir audio:",
+                error
+            );
+
+
+            this.showFormMessage(
+                error.message
+            );
+
+
+            this.setStatus(
+                "error",
+                "Error"
+            );
+        }
+        finally {
+
+            this.setLoading(
+                false
+            );
+        }
+    }
+
+
+    /* ========================================================
+       CARGANDO
+    ======================================================== */
+
+    setLoading(isLoading) {
+
+        this.fileInput.disabled =
+            isLoading;
+
+        this.sourceLanguage.disabled =
+            isLoading;
+
+        this.targetLanguage.disabled =
+            isLoading;
+
+        this.swapButton.disabled =
+            isLoading;
+
+
+        this.translateButton.disabled =
+            isLoading ||
+            !this.audioData ||
+            !this.selectedFile;
+
+
+        this.translateButton.textContent =
+            isLoading
+                ? "Transcribiendo y traduciendo..."
+                : "Traducir audio";
+    }
+
+
+    /* ========================================================
+       LIMPIAR RESULTADOS
+    ======================================================== */
+
+    clearResults() {
+
+        this.results.classList.add(
+            "d-none"
+        );
+
+
+        this.processedFileName.textContent = "-";
+
+        this.transcription.textContent = "";
+
+        this.translatedText.textContent = "";
+
+        this.detectedLanguage.textContent = "-";
+
+
+        this.hideWarning();
+    }
+
+
+    /* ========================================================
+       ADVERTENCIA
+    ======================================================== */
+
+    showWarning(message) {
+
+        this.warning.textContent =
+            message;
+
+
+        this.warning.classList.remove(
+            "d-none"
+        );
+    }
+
+
+    hideWarning() {
+
+        this.warning.textContent = "";
+
+
+        this.warning.classList.add(
+            "d-none"
+        );
+    }
+
+
+    /* ========================================================
+       MENSAJE
+    ======================================================== */
+
+    showFormMessage(message = "") {
+
+        this.formMessage.textContent =
+            message;
+    }
+
+
+    /* ========================================================
+       RESULTADOS
+    ======================================================== */
+
+    scrollToResults() {
+
+        this.results.scrollIntoView({
+            behavior:
+                "smooth",
+
+            block:
+                "nearest"
+        });
+    }
+
+
+    /* ========================================================
+       ESTADO GLOBAL
+    ======================================================== */
+
+    setStatus(
+        type,
+        message
+    ) {
+
+        this.statusIndicator.classList.remove(
+            "loading",
+            "error"
+        );
+
+
+        if (type === "loading") {
+
+            this.statusIndicator.classList.add(
+                "loading"
+            );
+        }
+
+
+        if (type === "error") {
+
+            this.statusIndicator.classList.add(
+                "error"
+            );
+        }
+
+
+        this.statusText.textContent =
+            message;
+    }
+}
+
+
+/* ============================================================
    CLASE PARA TRADUCCIÓN DE DOCUMENTOS
 ============================================================ */
 
@@ -2608,6 +3644,12 @@ function initializeModeNavigation() {
         );
 
 
+    const audioModeButton =
+        document.getElementById(
+            "audioModeButton"
+        );
+
+
     const documentModeButton =
         document.getElementById(
             "documentModeButton"
@@ -2664,6 +3706,24 @@ function initializeModeNavigation() {
 
 
     if (
+        audioModeButton &&
+        statusText &&
+        statusIndicator
+    ) {
+
+        audioModeButton.addEventListener(
+            "shown.bs.tab",
+            () => {
+
+                resetStatus(
+                    "Traductor de audio disponible"
+                );
+            }
+        );
+    }
+
+
+    if (
         documentModeButton &&
         statusText &&
         statusIndicator
@@ -2709,6 +3769,8 @@ document.addEventListener(
     () => {
 
         new TranslationChatApp();
+
+        new AudioTranslationApp();
 
         new ImageTranslationApp();
 
