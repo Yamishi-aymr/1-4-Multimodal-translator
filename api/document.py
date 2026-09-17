@@ -1,6 +1,8 @@
 import base64
+import io
 import json
 import os
+
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler
 
@@ -68,12 +70,71 @@ class DocumentTranslationService:
 
 
     # ========================================================
+    # SUBIR ARCHIVO TEMPORAL
+    # ========================================================
+
+    def upload_file(
+        self,
+        document_bytes,
+        filename
+    ):
+
+        file_object = io.BytesIO(
+            document_bytes
+        )
+
+        file_object.name = (
+            filename
+        )
+
+
+        uploaded_file = (
+            self.client.files.create(
+                file=file_object,
+                purpose="user_data"
+            )
+        )
+
+
+        return uploaded_file.id
+
+
+    # ========================================================
+    # ELIMINAR ARCHIVO TEMPORAL
+    # ========================================================
+
+    def delete_file(
+        self,
+        file_id
+    ):
+
+        if not file_id:
+            return
+
+
+        try:
+
+            self.client.files.delete(
+                file_id
+            )
+
+        except Exception as error:
+
+            print(
+                "No fue posible eliminar "
+                f"el archivo temporal {file_id}: "
+                f"{type(error).__name__}: "
+                f"{error}"
+            )
+
+
+    # ========================================================
     # TRADUCIR DOCUMENTO
     # ========================================================
 
     def translate_document(
         self,
-        file_base64,
+        document_bytes,
         filename,
         source_language,
         target_language
@@ -95,7 +156,7 @@ class DocumentTranslationService:
         instructions = f"""
 Eres un traductor profesional especializado en documentos.
 
-Debes analizar el documento proporcionado.
+Debes analizar exclusivamente el documento proporcionado.
 
 El usuario indicó:
 
@@ -120,143 +181,183 @@ Tu tarea es:
 9. Si una parte no puede leerse correctamente, indícalo
    mediante una advertencia.
 10. Si el idioma detectado no coincide con el idioma de origen
-    seleccionado, indícalo en la advertencia.
+    seleccionado por el usuario, indícalo en la advertencia.
 
 La traducción debe conservar el significado original y utilizar
 una redacción natural en el idioma de destino.
 """
 
 
-        response = self.client.responses.create(
-
-            model=self.model,
-
-            instructions=
-                instructions,
-
-            input=[
-                {
-                    "role":
-                        "user",
-
-                    "content": [
-
-                        {
-                            "type":
-                                "input_text",
-
-                            "text":
-                                "Lee y traduce el documento adjunto."
-                        },
-
-                        {
-                            "type":
-                                "input_file",
-
-                            "filename":
-                                filename,
-
-                            "file_data":
-                                file_base64
-                        }
-                    ]
-                }
-            ],
-
-            reasoning={
-                "effort":
-                    "none"
-            },
-
-            text={
-                "format": {
-
-                    "type":
-                        "json_schema",
-
-                    "name":
-                        "document_translation",
-
-                    "strict":
-                        True,
-
-                    "schema": {
-
-                        "type":
-                            "object",
-
-                        "properties": {
-
-                            "has_text": {
-                                "type":
-                                    "boolean"
-                            },
-
-                            "original_text": {
-                                "type":
-                                    "string"
-                            },
-
-                            "translation": {
-                                "type":
-                                    "string"
-                            },
-
-                            "detected_language": {
-
-                                "type":
-                                    "string",
-
-                                "enum": [
-                                    "es",
-                                    "en",
-                                    "unknown"
-                                ]
-                            },
-
-                            "warning": {
-                                "type":
-                                    "string"
-                            }
-                        },
-
-                        "required": [
-                            "has_text",
-                            "original_text",
-                            "translation",
-                            "detected_language",
-                            "warning"
-                        ],
-
-                        "additionalProperties":
-                            False
-                    }
-                }
-            },
-
-            max_output_tokens=
-                6000
-        )
+        file_id = None
 
 
-        output_text = str(
-            response.output_text or ""
-        ).strip()
+        try:
 
+            # =================================================
+            # SUBIR DOCUMENTO
+            # =================================================
 
-        if not output_text:
+            file_id = self.upload_file(
+                document_bytes=
+                    document_bytes,
 
-            raise ValueError(
-                "La IA no devolvió contenido."
+                filename=
+                    filename
             )
 
 
-        result = json.loads(
-            output_text
-        )
+            print(
+                f"Archivo temporal creado: {file_id}"
+            )
 
 
-        return result
+            # =================================================
+            # ANALIZAR DOCUMENTO
+            # =================================================
+
+            response = (
+                self.client.responses.create(
+
+                    model=
+                        self.model,
+
+                    instructions=
+                        instructions,
+
+                    input=[
+                        {
+                            "role":
+                                "user",
+
+                            "content": [
+
+                                {
+                                    "type":
+                                        "input_text",
+
+                                    "text":
+                                        "Lee el documento adjunto y traduce su contenido."
+                                },
+
+                                {
+                                    "type":
+                                        "input_file",
+
+                                    "file_id":
+                                        file_id
+                                }
+                            ]
+                        }
+                    ],
+
+                    reasoning={
+                        "effort":
+                            "none"
+                    },
+
+                    text={
+                        "format": {
+
+                            "type":
+                                "json_schema",
+
+                            "name":
+                                "document_translation",
+
+                            "strict":
+                                True,
+
+                            "schema": {
+
+                                "type":
+                                    "object",
+
+                                "properties": {
+
+                                    "has_text": {
+                                        "type":
+                                            "boolean"
+                                    },
+
+                                    "original_text": {
+                                        "type":
+                                            "string"
+                                    },
+
+                                    "translation": {
+                                        "type":
+                                            "string"
+                                    },
+
+                                    "detected_language": {
+
+                                        "type":
+                                            "string",
+
+                                        "enum": [
+                                            "es",
+                                            "en",
+                                            "unknown"
+                                        ]
+                                    },
+
+                                    "warning": {
+                                        "type":
+                                            "string"
+                                    }
+                                },
+
+                                "required": [
+                                    "has_text",
+                                    "original_text",
+                                    "translation",
+                                    "detected_language",
+                                    "warning"
+                                ],
+
+                                "additionalProperties":
+                                    False
+                            }
+                        }
+                    },
+
+                    max_output_tokens=
+                        6000
+                )
+            )
+
+
+            output_text = str(
+                response.output_text or ""
+            ).strip()
+
+
+            if not output_text:
+
+                raise ValueError(
+                    "La IA no devolvió contenido."
+                )
+
+
+            result = json.loads(
+                output_text
+            )
+
+
+            return result
+
+
+        finally:
+
+            # =================================================
+            # ELIMINAR ARCHIVO DE OPENAI
+            # =================================================
+
+            if file_id:
+
+                self.delete_file(
+                    file_id
+                )
 
 
 # ============================================================
@@ -635,7 +736,7 @@ class handler(BaseHTTPRequestHandler):
 
 
             # =================================================
-            # VALIDAR ARCHIVO
+            # VALIDAR NOMBRE
             # =================================================
 
             if not filename:
@@ -650,6 +751,10 @@ class handler(BaseHTTPRequestHandler):
 
                 return
 
+
+            # =================================================
+            # EXTENSIÓN
+            # =================================================
 
             extension = (
                 Path(
@@ -676,6 +781,10 @@ class handler(BaseHTTPRequestHandler):
                 return
 
 
+            # =================================================
+            # MIME
+            # =================================================
+
             if (
                 mime_type
                 and
@@ -694,6 +803,10 @@ class handler(BaseHTTPRequestHandler):
                 return
 
 
+            # =================================================
+            # DOCUMENTO
+            # =================================================
+
             if not file_data:
 
                 self.send_json(
@@ -708,7 +821,7 @@ class handler(BaseHTTPRequestHandler):
 
 
             # =================================================
-            # EXTRAER BASE64 DEL DATA URL
+            # EXTRAER BASE64
             # =================================================
 
             if "," in file_data:
@@ -728,7 +841,7 @@ class handler(BaseHTTPRequestHandler):
 
 
             # =================================================
-            # VALIDAR BASE64
+            # DECODIFICAR
             # =================================================
 
             try:
@@ -774,7 +887,7 @@ class handler(BaseHTTPRequestHandler):
 
 
             # =================================================
-            # TAMAÑO MÁXIMO
+            # TAMAÑO
             # =================================================
 
             if (
@@ -816,7 +929,7 @@ class handler(BaseHTTPRequestHandler):
 
 
             # =================================================
-            # SERVICIO
+            # TRADUCIR
             # =================================================
 
             translator = (
@@ -829,8 +942,8 @@ class handler(BaseHTTPRequestHandler):
             result = (
                 translator.translate_document(
 
-                    file_base64=
-                        encoded_data,
+                    document_bytes=
+                        document_bytes,
 
                     filename=
                         filename,
@@ -887,7 +1000,7 @@ class handler(BaseHTTPRequestHandler):
 
 
             # =================================================
-            # RESPUESTA EXITOSA
+            # RESPUESTA
             # =================================================
 
             self.send_json(
@@ -954,7 +1067,7 @@ class handler(BaseHTTPRequestHandler):
         except Exception as error:
 
             print(
-                f"Error en /api/document: "
+                "Error en /api/document: "
                 f"{type(error).__name__}: "
                 f"{error}"
             )
