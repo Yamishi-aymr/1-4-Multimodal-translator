@@ -3,7 +3,7 @@
 ============================================================ */
 
 const CHAT_API_URL =
-    "https://TU-PROYECTO.vercel.app/api/chat";
+    "https://1-4-multimodal-translator.vercel.app";
 
 const MAX_MESSAGE_LENGTH =
     2000;
