@@ -36,6 +36,7 @@
     ====================================================== -->
 
     <nav class="navbar navbar-expand-lg app-navbar">
+
         <div class="container">
 
             <a
@@ -51,7 +52,9 @@
                 </span>
             </a>
 
+
             <div class="navbar-status">
+
                 <span
                     id="statusIndicator"
                     class="status-dot"
@@ -60,9 +63,11 @@
                 <span id="statusText">
                     IA disponible
                 </span>
+
             </div>
 
         </div>
+
     </nav>
 
 
@@ -98,12 +103,24 @@
              MODALIDADES
         ================================================== -->
 
-        <section class="mode-navigation">
+        <section
+            class="mode-navigation"
+            role="tablist"
+        >
+
+            <!-- CHAT -->
 
             <button
+                id="chatModeButton"
                 class="mode-button active"
                 type="button"
+                data-bs-toggle="pill"
+                data-bs-target="#chatSection"
+                role="tab"
+                aria-controls="chatSection"
+                aria-selected="true"
             >
+
                 <span class="mode-icon">
                     💬
                 </span>
@@ -111,8 +128,11 @@
                 <span>
                     Chat
                 </span>
+
             </button>
 
+
+            <!-- AUDIO -->
 
             <button
                 class="mode-button"
@@ -120,6 +140,7 @@
                 disabled
                 title="Disponible próximamente"
             >
+
                 <span class="mode-icon">
                     🎙️
                 </span>
@@ -131,8 +152,11 @@
                 <small>
                     Próximamente
                 </small>
+
             </button>
 
+
+            <!-- DOCUMENTOS -->
 
             <button
                 class="mode-button"
@@ -140,6 +164,7 @@
                 disabled
                 title="Disponible próximamente"
             >
+
                 <span class="mode-icon">
                     📄
                 </span>
@@ -151,15 +176,23 @@
                 <small>
                     Próximamente
                 </small>
+
             </button>
 
 
+            <!-- IMÁGENES -->
+
             <button
+                id="imageModeButton"
                 class="mode-button"
                 type="button"
-                disabled
-                title="Disponible próximamente"
+                data-bs-toggle="pill"
+                data-bs-target="#imageSection"
+                role="tab"
+                aria-controls="imageSection"
+                aria-selected="false"
             >
+
                 <span class="mode-icon">
                     🖼️
                 </span>
@@ -168,217 +201,603 @@
                     Imágenes
                 </span>
 
-                <small>
-                    Próximamente
-                </small>
             </button>
 
         </section>
 
 
         <!-- =================================================
-             PANEL PRINCIPAL
+             CONTENEDOR DE MÓDULOS
         ================================================== -->
 
-        <section class="translator-panel">
-
-            <!-- =============================================
-                 CABECERA DEL CHAT
-            ============================================== -->
-
-            <div class="chat-header">
-
-                <div>
-                    <h2>
-                        Conversación bilingüe
-                    </h2>
-
-                    <p>
-                        Envía mensajes en español o inglés y
-                        obtén su traducción manteniendo el
-                        contexto de la conversación.
-                    </p>
-                </div>
+        <div class="tab-content">
 
 
-                <button
-                    id="newConversationButton"
-                    class="btn-new-chat"
-                    type="button"
-                >
-                    Nueva conversación
-                </button>
+            <!-- =================================================
+                 MÓDULO CHAT
+            ================================================== -->
 
-            </div>
-
-
-            <!-- =============================================
-                 SELECTORES DE IDIOMA
-            ============================================== -->
-
-            <div class="language-selector">
-
-                <div class="language-control">
-
-                    <label for="sourceLanguage">
-                        Idioma de origen
-                    </label>
-
-                    <select
-                        id="sourceLanguage"
-                        class="form-select"
-                    >
-                        <option value="es">
-                            Español
-                        </option>
-
-                        <option value="en">
-                            English
-                        </option>
-                    </select>
-
-                </div>
-
-
-                <button
-                    id="swapLanguagesButton"
-                    class="swap-button"
-                    type="button"
-                    aria-label="Intercambiar idiomas"
-                    title="Intercambiar idiomas"
-                >
-                    ⇄
-                </button>
-
-
-                <div class="language-control">
-
-                    <label for="targetLanguage">
-                        Idioma de destino
-                    </label>
-
-                    <select
-                        id="targetLanguage"
-                        class="form-select"
-                    >
-                        <option value="en">
-                            English
-                        </option>
-
-                        <option value="es">
-                            Español
-                        </option>
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- =============================================
-                 INDICADOR DE DIRECCIÓN
-            ============================================== -->
-
-            <div
-                id="translationDirection"
-                class="translation-direction"
-            >
-                Español → English
-            </div>
-
-
-            <!-- =============================================
-                 CONVERSACIÓN
-            ============================================== -->
-
-            <div
-                id="conversation"
-                class="conversation"
-                aria-live="polite"
+            <section
+                id="chatSection"
+                class="tab-pane fade show active"
+                role="tabpanel"
+                aria-labelledby="chatModeButton"
             >
 
-                <div
-                    id="emptyConversation"
-                    class="empty-conversation"
-                >
-                    <div class="empty-icon">
-                        💬
-                    </div>
+                <div class="translator-panel">
 
-                    <h3>
-                        Inicia una conversación
-                    </h3>
+                    <!-- =========================================
+                         CABECERA
+                    ========================================== -->
 
-                    <p>
-                        Escribe un mensaje en español o inglés.
-                        Aquí aparecerán el contenido original y
-                        su traducción.
-                    </p>
-                </div>
+                    <div class="chat-header">
 
-            </div>
+                        <div>
 
+                            <h2>
+                                Conversación bilingüe
+                            </h2>
 
-            <!-- =============================================
-                 FORMULARIO
-            ============================================== -->
+                            <p>
+                                Envía mensajes en español o inglés y
+                                obtén su traducción manteniendo el
+                                contexto de la conversación.
+                            </p>
 
-            <form id="chatForm">
-
-                <div class="input-section">
-
-                    <label
-                        for="messageInput"
-                        class="input-label"
-                    >
-                        Mensaje
-                    </label>
+                        </div>
 
 
-                    <textarea
-                        id="messageInput"
-                        class="form-control message-input"
-                        rows="4"
-                        maxlength="2000"
-                        placeholder="Escribe aquí el mensaje que deseas traducir..."
-                    ></textarea>
-
-
-                    <div class="input-info">
-
-                        <span>
-                            Ctrl + Enter para enviar
-                        </span>
-
-                        <span id="characterCounter">
-                            0 / 2000
-                        </span>
+                        <button
+                            id="newConversationButton"
+                            class="btn-new-chat"
+                            type="button"
+                        >
+                            Nueva conversación
+                        </button>
 
                     </div>
 
 
-                    <button
-                        id="sendButton"
-                        class="send-button"
-                        type="submit"
-                    >
-                        <span>
-                            Traducir mensaje
-                        </span>
-                    </button>
+                    <!-- =========================================
+                         SELECTORES DE IDIOMA
+                    ========================================== -->
 
+                    <div class="language-selector">
+
+                        <div class="language-control">
+
+                            <label for="sourceLanguage">
+                                Idioma de origen
+                            </label>
+
+                            <select
+                                id="sourceLanguage"
+                                class="form-select"
+                            >
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <button
+                            id="swapLanguagesButton"
+                            class="swap-button"
+                            type="button"
+                            aria-label="Intercambiar idiomas"
+                            title="Intercambiar idiomas"
+                        >
+                            ⇄
+                        </button>
+
+
+                        <div class="language-control">
+
+                            <label for="targetLanguage">
+                                Idioma de destino
+                            </label>
+
+                            <select
+                                id="targetLanguage"
+                                class="form-select"
+                            >
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         DIRECCIÓN DE TRADUCCIÓN
+                    ========================================== -->
 
                     <div
-                        id="formMessage"
-                        class="form-message"
-                        role="alert"
-                    ></div>
+                        id="translationDirection"
+                        class="translation-direction"
+                    >
+                        Español → English
+                    </div>
+
+
+                    <!-- =========================================
+                         CONVERSACIÓN
+                    ========================================== -->
+
+                    <div
+                        id="conversation"
+                        class="conversation"
+                        aria-live="polite"
+                    >
+
+                        <div
+                            id="emptyConversation"
+                            class="empty-conversation"
+                        >
+
+                            <div class="empty-icon">
+                                💬
+                            </div>
+
+                            <h3>
+                                Inicia una conversación
+                            </h3>
+
+                            <p>
+                                Escribe un mensaje en español o inglés.
+                                Aquí aparecerán el contenido original y
+                                su traducción.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         FORMULARIO
+                    ========================================== -->
+
+                    <form id="chatForm">
+
+                        <div class="input-section">
+
+                            <label
+                                for="messageInput"
+                                class="input-label"
+                            >
+                                Mensaje
+                            </label>
+
+
+                            <textarea
+                                id="messageInput"
+                                class="form-control message-input"
+                                rows="4"
+                                maxlength="2000"
+                                placeholder="Escribe aquí el mensaje que deseas traducir..."
+                            ></textarea>
+
+
+                            <div class="input-info">
+
+                                <span>
+                                    Ctrl + Enter para enviar
+                                </span>
+
+                                <span id="characterCounter">
+                                    0 / 2000
+                                </span>
+
+                            </div>
+
+
+                            <button
+                                id="sendButton"
+                                class="send-button"
+                                type="submit"
+                            >
+                                <span>
+                                    Traducir mensaje
+                                </span>
+                            </button>
+
+
+                            <div
+                                id="formMessage"
+                                class="form-message"
+                                role="alert"
+                            ></div>
+
+                        </div>
+
+                    </form>
 
                 </div>
 
-            </form>
+            </section>
 
-        </section>
+
+            <!-- =================================================
+                 MÓDULO IMÁGENES
+            ================================================== -->
+
+            <section
+                id="imageSection"
+                class="tab-pane fade"
+                role="tabpanel"
+                aria-labelledby="imageModeButton"
+            >
+
+                <div class="translator-panel">
+
+                    <!-- =========================================
+                         CABECERA
+                    ========================================== -->
+
+                    <div class="chat-header">
+
+                        <div>
+
+                            <h2>
+                                Traducción de imágenes
+                            </h2>
+
+                            <p>
+                                Selecciona una imagen que contenga
+                                texto en español o inglés. La IA
+                                identificará el contenido visible y
+                                generará su traducción.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         SELECTORES DE IDIOMA
+                    ========================================== -->
+
+                    <div class="language-selector">
+
+                        <div class="language-control">
+
+                            <label for="imageSourceLanguage">
+                                Idioma de origen
+                            </label>
+
+                            <select
+                                id="imageSourceLanguage"
+                                class="form-select"
+                            >
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <button
+                            id="imageSwapLanguagesButton"
+                            class="swap-button"
+                            type="button"
+                            aria-label="Intercambiar idiomas"
+                            title="Intercambiar idiomas"
+                        >
+                            ⇄
+                        </button>
+
+
+                        <div class="language-control">
+
+                            <label for="imageTargetLanguage">
+                                Idioma de destino
+                            </label>
+
+                            <select
+                                id="imageTargetLanguage"
+                                class="form-select"
+                            >
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         DIRECCIÓN
+                    ========================================== -->
+
+                    <div
+                        id="imageTranslationDirection"
+                        class="translation-direction"
+                    >
+                        Español → English
+                    </div>
+
+
+                    <!-- =========================================
+                         FORMULARIO DE IMAGEN
+                    ========================================== -->
+
+                    <form id="imageForm">
+
+                        <div class="input-section">
+
+                            <label
+                                for="imageInput"
+                                class="input-label"
+                            >
+                                Selecciona una imagen
+                            </label>
+
+
+                            <input
+                                id="imageInput"
+                                class="form-control"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                            >
+
+
+                            <div class="input-info">
+
+                                <span>
+                                    Formatos permitidos:
+                                    JPG, PNG y WebP
+                                </span>
+
+                                <span>
+                                    Máximo 3 MB
+                                </span>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 VISTA PREVIA
+                            ================================== -->
+
+                            <div
+                                class="card border-0 bg-light mt-3 mb-3"
+                            >
+
+                                <div class="card-body">
+
+                                    <h3 class="h6 mb-3">
+                                        Vista previa
+                                    </h3>
+
+
+                                    <div
+                                        id="imagePreviewPlaceholder"
+                                        class="text-center text-secondary py-5"
+                                    >
+
+                                        <div
+                                            class="fs-1 mb-2"
+                                        >
+                                            🖼️
+                                        </div>
+
+                                        <p class="mb-0">
+                                            Aquí aparecerá la imagen
+                                            seleccionada.
+                                        </p>
+
+                                    </div>
+
+
+                                    <img
+                                        id="imagePreview"
+                                        class="img-fluid rounded mx-auto d-none"
+                                        alt="Vista previa de la imagen seleccionada"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 BOTÓN
+                            ================================== -->
+
+                            <button
+                                id="imageTranslateButton"
+                                class="send-button"
+                                type="submit"
+                                disabled
+                            >
+                                Traducir imagen
+                            </button>
+
+
+                            <div
+                                id="imageFormMessage"
+                                class="form-message"
+                                role="alert"
+                            ></div>
+
+                        </div>
+
+                    </form>
+
+
+                    <!-- =========================================
+                         RESULTADOS
+                    ========================================== -->
+
+                    <div
+                        id="imageResults"
+                        class="input-section border-top d-none"
+                    >
+
+                        <div class="mb-4">
+
+                            <h3 class="h6">
+                                Texto detectado
+                            </h3>
+
+                            <div
+                                class="card border-0 bg-light"
+                            >
+
+                                <div class="card-body">
+
+                                    <p
+                                        id="detectedImageText"
+                                        class="mb-0"
+                                    >
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <h3 class="h6">
+                                Traducción
+                            </h3>
+
+                            <div
+                                class="card border-0 bg-light"
+                            >
+
+                                <div class="card-body">
+
+                                    <p
+                                        id="translatedImageText"
+                                        class="mb-0"
+                                    >
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             INFORMACIÓN DE ANÁLISIS
+                        ====================================== -->
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <div
+                                    class="card border-0 bg-light h-100"
+                                >
+
+                                    <div class="card-body">
+
+                                        <small
+                                            class="text-secondary d-block"
+                                        >
+                                            Idioma detectado
+                                        </small>
+
+                                        <strong
+                                            id="detectedImageLanguage"
+                                        >
+                                            -
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <div
+                                    class="card border-0 bg-light h-100"
+                                >
+
+                                    <div class="card-body">
+
+                                        <small
+                                            class="text-secondary d-block"
+                                        >
+                                            Nivel de certeza
+                                        </small>
+
+                                        <strong
+                                            id="imageConfidence"
+                                        >
+                                            -
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             ADVERTENCIA
+                        ====================================== -->
+
+                        <div
+                            id="imageWarning"
+                            class="alert alert-warning mt-3 mb-0 d-none"
+                            role="alert"
+                        >
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
 
 
         <!-- =================================================
@@ -392,6 +811,7 @@
             </span>
 
             <div>
+
                 <strong>
                     Aviso sobre Inteligencia Artificial
                 </strong>
@@ -402,6 +822,7 @@
                     Evita ingresar información personal,
                     confidencial o sensible.
                 </p>
+
             </div>
 
         </section>
@@ -418,6 +839,7 @@
         <div class="container footer-content">
 
             <div>
+
                 <strong>
                     Traductor Inteligente Multimodal
                 </strong>
@@ -426,10 +848,12 @@
                     Proyecto académico de Tecnologías de la
                     Información y Comunicaciones
                 </p>
+
             </div>
 
 
             <div class="developer-info">
+
                 <span>
                     Desarrollado por:
                 </span>
@@ -437,6 +861,7 @@
                 <strong>
                     Nombre del desarrollador
                 </strong>
+
             </div>
 
         </div>

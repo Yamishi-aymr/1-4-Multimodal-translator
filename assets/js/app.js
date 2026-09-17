@@ -4,16 +4,29 @@
 
 const CHAT_API_URL =
     "https://1-4-multimodal-translator.vercel.app/api/chat";
-    
+
+const IMAGE_API_URL =
+    "https://1-4-multimodal-translator.vercel.app/api/image";
+
+
 const MAX_MESSAGE_LENGTH =
     2000;
 
 const MAX_HISTORY_MESSAGES =
     8;
 
+const MAX_IMAGE_SIZE =
+    3 * 1024 * 1024;
+
+const ALLOWED_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+];
+
 
 /* ============================================================
-   CLASE PRINCIPAL
+   CLASE PRINCIPAL DEL CHAT
 ============================================================ */
 
 class TranslationChatApp {
@@ -194,7 +207,6 @@ class TranslationChatApp {
             "ready",
             "IA disponible"
         );
-
     }
 
 
@@ -213,12 +225,10 @@ class TranslationChatApp {
                 this.sourceLanguage.value === "es"
                     ? "en"
                     : "es";
-
         }
 
 
         this.updateLanguageDirection();
-
     }
 
 
@@ -237,12 +247,10 @@ class TranslationChatApp {
                 this.targetLanguage.value === "es"
                     ? "en"
                     : "es";
-
         }
 
 
         this.updateLanguageDirection();
-
     }
 
 
@@ -255,8 +263,10 @@ class TranslationChatApp {
         const source =
             this.sourceLanguage.value;
 
+
         this.sourceLanguage.value =
             this.targetLanguage.value;
+
 
         this.targetLanguage.value =
             source;
@@ -264,9 +274,7 @@ class TranslationChatApp {
 
         this.updateLanguageDirection();
 
-
         this.messageInput.focus();
-
     }
 
 
@@ -281,6 +289,7 @@ class TranslationChatApp {
                 this.sourceLanguage.value
             ];
 
+
         const targetName =
             this.languageNames[
                 this.targetLanguage.value
@@ -289,7 +298,6 @@ class TranslationChatApp {
 
         this.translationDirection.textContent =
             `${sourceName} → ${targetName}`;
-
     }
 
 
@@ -305,7 +313,6 @@ class TranslationChatApp {
 
         this.characterCounter.textContent =
             `${length} / ${MAX_MESSAGE_LENGTH}`;
-
     }
 
 
@@ -329,7 +336,6 @@ class TranslationChatApp {
             this.statusIndicator.classList.add(
                 "loading"
             );
-
         }
 
 
@@ -338,13 +344,11 @@ class TranslationChatApp {
             this.statusIndicator.classList.add(
                 "error"
             );
-
         }
 
 
         this.statusText.textContent =
             message;
-
     }
 
 
@@ -356,12 +360,11 @@ class TranslationChatApp {
 
         this.formMessage.textContent =
             message;
-
     }
 
 
     /* ========================================================
-       ENVIAR
+       ENVIAR MENSAJE
     ======================================================== */
 
     async handleSubmit(event) {
@@ -393,7 +396,6 @@ class TranslationChatApp {
             this.messageInput.focus();
 
             return;
-
         }
 
 
@@ -407,7 +409,6 @@ class TranslationChatApp {
             );
 
             return;
-
         }
 
 
@@ -418,7 +419,6 @@ class TranslationChatApp {
             );
 
             return;
-
         }
 
 
@@ -485,7 +485,6 @@ class TranslationChatApp {
                 throw new Error(
                     "El servidor devolvió una respuesta no válida."
                 );
-
             }
 
 
@@ -495,7 +494,6 @@ class TranslationChatApp {
                     data.error ||
                     "No fue posible realizar la traducción."
                 );
-
             }
 
 
@@ -504,7 +502,6 @@ class TranslationChatApp {
                 throw new Error(
                     "La IA no devolvió una traducción."
                 );
-
             }
 
 
@@ -524,7 +521,6 @@ class TranslationChatApp {
                 target_language:
                     data.target_language ||
                     target
-
             };
 
 
@@ -552,7 +548,6 @@ class TranslationChatApp {
 
 
             this.messageInput.focus();
-
         }
         catch (error) {
 
@@ -571,16 +566,13 @@ class TranslationChatApp {
                 "error",
                 "Error"
             );
-
         }
         finally {
 
             this.setLoading(
                 false
             );
-
         }
-
     }
 
 
@@ -610,19 +602,10 @@ class TranslationChatApp {
             isLoading;
 
 
-        if (isLoading) {
-
-            this.sendButton.textContent =
-                "Traduciendo...";
-
-        }
-        else {
-
-            this.sendButton.textContent =
-                "Traducir mensaje";
-
-        }
-
+        this.sendButton.textContent =
+            isLoading
+                ? "Traduciendo..."
+                : "Traducir mensaje";
     }
 
 
@@ -641,7 +624,6 @@ class TranslationChatApp {
         if (emptyConversation) {
 
             emptyConversation.remove();
-
         }
 
 
@@ -774,12 +756,11 @@ class TranslationChatApp {
 
         this.conversation.scrollTop =
             this.conversation.scrollHeight;
-
     }
 
 
     /* ========================================================
-       CREAR SECCIÓN DE MENSAJE
+       CREAR SECCIÓN
     ======================================================== */
 
     createMessageSection(
@@ -824,12 +805,6 @@ class TranslationChatApp {
             "message-text";
 
 
-        /*
-         * textContent se utiliza intencionalmente
-         * para evitar insertar HTML recibido
-         * desde el servidor.
-         */
-
         textElement.textContent =
             text;
 
@@ -845,7 +820,6 @@ class TranslationChatApp {
 
 
         return section;
-
     }
 
 
@@ -886,7 +860,6 @@ class TranslationChatApp {
 
         this.showFormMessage();
 
-
         this.updateCharacterCounter();
 
 
@@ -897,9 +870,928 @@ class TranslationChatApp {
 
 
         this.messageInput.focus();
+    }
+}
 
+
+/* ============================================================
+   CLASE PARA TRADUCCIÓN DE IMÁGENES
+============================================================ */
+
+class ImageTranslationApp {
+
+    constructor() {
+
+        this.form =
+            document.getElementById(
+                "imageForm"
+            );
+
+        this.fileInput =
+            document.getElementById(
+                "imageInput"
+            );
+
+        this.preview =
+            document.getElementById(
+                "imagePreview"
+            );
+
+        this.previewPlaceholder =
+            document.getElementById(
+                "imagePreviewPlaceholder"
+            );
+
+        this.translateButton =
+            document.getElementById(
+                "imageTranslateButton"
+            );
+
+        this.sourceLanguage =
+            document.getElementById(
+                "imageSourceLanguage"
+            );
+
+        this.targetLanguage =
+            document.getElementById(
+                "imageTargetLanguage"
+            );
+
+        this.swapButton =
+            document.getElementById(
+                "imageSwapLanguagesButton"
+            );
+
+        this.translationDirection =
+            document.getElementById(
+                "imageTranslationDirection"
+            );
+
+        this.formMessage =
+            document.getElementById(
+                "imageFormMessage"
+            );
+
+        this.results =
+            document.getElementById(
+                "imageResults"
+            );
+
+        this.detectedText =
+            document.getElementById(
+                "detectedImageText"
+            );
+
+        this.translatedText =
+            document.getElementById(
+                "translatedImageText"
+            );
+
+        this.detectedLanguage =
+            document.getElementById(
+                "detectedImageLanguage"
+            );
+
+        this.confidence =
+            document.getElementById(
+                "imageConfidence"
+            );
+
+        this.warning =
+            document.getElementById(
+                "imageWarning"
+            );
+
+        this.statusText =
+            document.getElementById(
+                "statusText"
+            );
+
+        this.statusIndicator =
+            document.getElementById(
+                "statusIndicator"
+            );
+
+
+        this.imageData =
+            "";
+
+
+        this.languageNames = {
+            es: "Español",
+            en: "English",
+            unknown: "No identificado"
+        };
+
+
+        this.confidenceNames = {
+            high: "Alto",
+            medium: "Medio",
+            low: "Bajo"
+        };
+
+
+        this.initialize();
     }
 
+
+    /* ========================================================
+       INICIALIZAR
+    ======================================================== */
+
+    initialize() {
+
+        this.fileInput.addEventListener(
+            "change",
+            () => {
+
+                this.handleImageSelection();
+
+            }
+        );
+
+
+        this.form.addEventListener(
+            "submit",
+            (event) => {
+
+                this.handleSubmit(
+                    event
+                );
+
+            }
+        );
+
+
+        this.swapButton.addEventListener(
+            "click",
+            () => {
+
+                this.swapLanguages();
+
+            }
+        );
+
+
+        this.sourceLanguage.addEventListener(
+            "change",
+            () => {
+
+                this.handleSourceLanguageChange();
+
+            }
+        );
+
+
+        this.targetLanguage.addEventListener(
+            "change",
+            () => {
+
+                this.handleTargetLanguageChange();
+
+            }
+        );
+
+
+        this.updateLanguageDirection();
+    }
+
+
+    /* ========================================================
+       CAMBIO DE IDIOMA ORIGEN
+    ======================================================== */
+
+    handleSourceLanguageChange() {
+
+        if (
+            this.sourceLanguage.value ===
+            this.targetLanguage.value
+        ) {
+
+            this.targetLanguage.value =
+                this.sourceLanguage.value === "es"
+                    ? "en"
+                    : "es";
+        }
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       CAMBIO DE IDIOMA DESTINO
+    ======================================================== */
+
+    handleTargetLanguageChange() {
+
+        if (
+            this.sourceLanguage.value ===
+            this.targetLanguage.value
+        ) {
+
+            this.sourceLanguage.value =
+                this.targetLanguage.value === "es"
+                    ? "en"
+                    : "es";
+        }
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       INTERCAMBIAR IDIOMAS
+    ======================================================== */
+
+    swapLanguages() {
+
+        const source =
+            this.sourceLanguage.value;
+
+
+        this.sourceLanguage.value =
+            this.targetLanguage.value;
+
+
+        this.targetLanguage.value =
+            source;
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       ACTUALIZAR DIRECCIÓN
+    ======================================================== */
+
+    updateLanguageDirection() {
+
+        const sourceName =
+            this.languageNames[
+                this.sourceLanguage.value
+            ];
+
+
+        const targetName =
+            this.languageNames[
+                this.targetLanguage.value
+            ];
+
+
+        this.translationDirection.textContent =
+            `${sourceName} → ${targetName}`;
+    }
+
+
+    /* ========================================================
+       SELECCIONAR IMAGEN
+    ======================================================== */
+
+    handleImageSelection() {
+
+        this.showFormMessage();
+
+        this.clearResults();
+
+        this.imageData =
+            "";
+
+
+        this.translateButton.disabled =
+            true;
+
+
+        this.preview.removeAttribute(
+            "src"
+        );
+
+
+        this.preview.classList.add(
+            "d-none"
+        );
+
+
+        this.previewPlaceholder.classList.remove(
+            "d-none"
+        );
+
+
+        const file =
+            this.fileInput.files[0];
+
+
+        if (!file) {
+
+            return;
+        }
+
+
+        /* ====================================================
+           VALIDAR TIPO
+        ==================================================== */
+
+        if (
+            !ALLOWED_IMAGE_TYPES.includes(
+                file.type
+            )
+        ) {
+
+            this.showFormMessage(
+                "Formato no permitido. Usa JPG, PNG o WebP."
+            );
+
+
+            this.fileInput.value =
+                "";
+
+
+            return;
+        }
+
+
+        /* ====================================================
+           VALIDAR TAMAÑO
+        ==================================================== */
+
+        if (
+            file.size >
+            MAX_IMAGE_SIZE
+        ) {
+
+            this.showFormMessage(
+                "La imagen debe pesar como máximo 3 MB."
+            );
+
+
+            this.fileInput.value =
+                "";
+
+
+            return;
+        }
+
+
+        if (
+            file.size === 0
+        ) {
+
+            this.showFormMessage(
+                "La imagen seleccionada está vacía."
+            );
+
+
+            this.fileInput.value =
+                "";
+
+
+            return;
+        }
+
+
+        /* ====================================================
+           LEER ARCHIVO
+        ==================================================== */
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            () => {
+
+                this.imageData =
+                    reader.result;
+
+
+                this.preview.src =
+                    this.imageData;
+
+
+                this.preview.classList.remove(
+                    "d-none"
+                );
+
+
+                this.previewPlaceholder.classList.add(
+                    "d-none"
+                );
+
+
+                this.translateButton.disabled =
+                    false;
+
+
+                this.setStatus(
+                    "ready",
+                    "Imagen lista"
+                );
+            };
+
+
+        reader.onerror =
+            () => {
+
+                this.imageData =
+                    "";
+
+
+                this.translateButton.disabled =
+                    true;
+
+
+                this.showFormMessage(
+                    "No fue posible leer la imagen seleccionada."
+                );
+
+
+                this.setStatus(
+                    "error",
+                    "Error"
+                );
+            };
+
+
+        reader.readAsDataURL(
+            file
+        );
+    }
+
+
+    /* ========================================================
+       ENVIAR IMAGEN
+    ======================================================== */
+
+    async handleSubmit(event) {
+
+        event.preventDefault();
+
+
+        this.showFormMessage();
+
+        this.clearResults();
+
+
+        if (!this.imageData) {
+
+            this.showFormMessage(
+                "Selecciona una imagen antes de traducir."
+            );
+
+            return;
+        }
+
+
+        const source =
+            this.sourceLanguage.value;
+
+
+        const target =
+            this.targetLanguage.value;
+
+
+        if (source === target) {
+
+            this.showFormMessage(
+                "El idioma de origen y destino deben ser diferentes."
+            );
+
+            return;
+        }
+
+
+        this.setLoading(
+            true
+        );
+
+
+        this.setStatus(
+            "loading",
+            "Analizando imagen..."
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    IMAGE_API_URL,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                image_data:
+                                    this.imageData,
+
+                                image_url:
+                                    "",
+
+                                source_language:
+                                    source,
+
+                                target_language:
+                                    target
+                            })
+                    }
+                );
+
+
+            let data;
+
+
+            try {
+
+                data =
+                    await response.json();
+
+            }
+            catch {
+
+                throw new Error(
+                    "El servidor devolvió una respuesta no válida."
+                );
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    "No fue posible traducir la imagen."
+                );
+            }
+
+
+            /* =================================================
+               IMAGEN SIN TEXTO
+            ================================================= */
+
+            if (!data.has_text) {
+
+                this.results.classList.remove(
+                    "d-none"
+                );
+
+
+                this.detectedText.textContent =
+                    "No se encontró texto legible.";
+
+
+                this.translatedText.textContent =
+                    "No hay contenido disponible para traducir.";
+
+
+                this.detectedLanguage.textContent =
+                    this.languageNames[
+                        data.detected_language
+                    ] ||
+                    "No identificado";
+
+
+                this.confidence.textContent =
+                    this.confidenceNames[
+                        data.confidence
+                    ] ||
+                    "Bajo";
+
+
+                this.showWarning(
+                    data.warning ||
+                    "La imagen no contiene texto legible o su calidad no permite identificarlo con seguridad."
+                );
+
+
+                this.setStatus(
+                    "ready",
+                    "Análisis terminado"
+                );
+
+
+                return;
+            }
+
+
+            /* =================================================
+               RESULTADO EXITOSO
+            ================================================= */
+
+            this.results.classList.remove(
+                "d-none"
+            );
+
+
+            this.detectedText.textContent =
+                data.detected_text ||
+                "No se pudo recuperar el texto detectado.";
+
+
+            this.translatedText.textContent =
+                data.translation ||
+                "No se recibió una traducción.";
+
+
+            this.detectedLanguage.textContent =
+                this.languageNames[
+                    data.detected_language
+                ] ||
+                "No identificado";
+
+
+            this.confidence.textContent =
+                this.confidenceNames[
+                    data.confidence
+                ] ||
+                "No disponible";
+
+
+            if (
+                data.warning &&
+                data.warning.trim()
+            ) {
+
+                this.showWarning(
+                    data.warning
+                );
+
+            }
+            else {
+
+                this.hideWarning();
+            }
+
+
+            this.setStatus(
+                "ready",
+                "Imagen traducida"
+            );
+
+
+            this.results.scrollIntoView({
+                behavior:
+                    "smooth",
+
+                block:
+                    "nearest"
+            });
+        }
+        catch (error) {
+
+            console.error(
+                "Error al traducir imagen:",
+                error
+            );
+
+
+            this.showFormMessage(
+                error.message
+            );
+
+
+            this.setStatus(
+                "error",
+                "Error"
+            );
+        }
+        finally {
+
+            this.setLoading(
+                false
+            );
+        }
+    }
+
+
+    /* ========================================================
+       CARGANDO
+    ======================================================== */
+
+    setLoading(isLoading) {
+
+        this.fileInput.disabled =
+            isLoading;
+
+
+        this.sourceLanguage.disabled =
+            isLoading;
+
+
+        this.targetLanguage.disabled =
+            isLoading;
+
+
+        this.swapButton.disabled =
+            isLoading;
+
+
+        this.translateButton.disabled =
+            isLoading ||
+            !this.imageData;
+
+
+        this.translateButton.textContent =
+            isLoading
+                ? "Analizando y traduciendo..."
+                : "Traducir imagen";
+    }
+
+
+    /* ========================================================
+       LIMPIAR RESULTADOS
+    ======================================================== */
+
+    clearResults() {
+
+        this.results.classList.add(
+            "d-none"
+        );
+
+
+        this.detectedText.textContent =
+            "";
+
+
+        this.translatedText.textContent =
+            "";
+
+
+        this.detectedLanguage.textContent =
+            "-";
+
+
+        this.confidence.textContent =
+            "-";
+
+
+        this.hideWarning();
+    }
+
+
+    /* ========================================================
+       ADVERTENCIA
+    ======================================================== */
+
+    showWarning(message) {
+
+        this.warning.textContent =
+            message;
+
+
+        this.warning.classList.remove(
+            "d-none"
+        );
+    }
+
+
+    hideWarning() {
+
+        this.warning.textContent =
+            "";
+
+
+        this.warning.classList.add(
+            "d-none"
+        );
+    }
+
+
+    /* ========================================================
+       MENSAJE DE FORMULARIO
+    ======================================================== */
+
+    showFormMessage(message = "") {
+
+        this.formMessage.textContent =
+            message;
+    }
+
+
+    /* ========================================================
+       ESTADO GLOBAL
+    ======================================================== */
+
+    setStatus(
+        type,
+        message
+    ) {
+
+        this.statusIndicator.classList.remove(
+            "loading",
+            "error"
+        );
+
+
+        if (type === "loading") {
+
+            this.statusIndicator.classList.add(
+                "loading"
+            );
+        }
+
+
+        if (type === "error") {
+
+            this.statusIndicator.classList.add(
+                "error"
+            );
+        }
+
+
+        this.statusText.textContent =
+            message;
+    }
+}
+
+
+/* ============================================================
+   CAMBIO ENTRE MÓDULOS
+============================================================ */
+
+function initializeModeNavigation() {
+
+    const chatModeButton =
+        document.getElementById(
+            "chatModeButton"
+        );
+
+
+    const imageModeButton =
+        document.getElementById(
+            "imageModeButton"
+        );
+
+
+    const statusText =
+        document.getElementById(
+            "statusText"
+        );
+
+
+    const statusIndicator =
+        document.getElementById(
+            "statusIndicator"
+        );
+
+
+    if (
+        chatModeButton &&
+        statusText &&
+        statusIndicator
+    ) {
+
+        chatModeButton.addEventListener(
+            "shown.bs.tab",
+            () => {
+
+                statusIndicator.classList.remove(
+                    "loading",
+                    "error"
+                );
+
+
+                statusText.textContent =
+                    "IA disponible";
+            }
+        );
+    }
+
+
+    if (
+        imageModeButton &&
+        statusText &&
+        statusIndicator
+    ) {
+
+        imageModeButton.addEventListener(
+            "shown.bs.tab",
+            () => {
+
+                statusIndicator.classList.remove(
+                    "loading",
+                    "error"
+                );
+
+
+                statusText.textContent =
+                    "Traductor de imágenes disponible";
+            }
+        );
+    }
 }
 
 
@@ -913,5 +1805,8 @@ document.addEventListener(
 
         new TranslationChatApp();
 
+        new ImageTranslationApp();
+
+        initializeModeNavigation();
     }
 );
