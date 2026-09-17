@@ -135,10 +135,14 @@
             <!-- AUDIO -->
 
             <button
+                id="audioModeButton"
                 class="mode-button"
                 type="button"
-                disabled
-                title="Disponible próximamente"
+                data-bs-toggle="pill"
+                data-bs-target="#audioSection"
+                role="tab"
+                aria-controls="audioSection"
+                aria-selected="false"
             >
 
                 <span class="mode-icon">
@@ -148,10 +152,6 @@
                 <span>
                     Audio
                 </span>
-
-                <small>
-                    Próximamente
-                </small>
 
             </button>
 
@@ -429,6 +429,382 @@
                         </div>
 
                     </form>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 MÓDULO AUDIO
+            ================================================== -->
+
+            <section
+                id="audioSection"
+                class="tab-pane fade"
+                role="tabpanel"
+                aria-labelledby="audioModeButton"
+            >
+
+                <div class="translator-panel">
+
+                    <!-- =========================================
+                         CABECERA
+                    ========================================== -->
+
+                    <div class="chat-header">
+
+                        <div>
+
+                            <h2>
+                                Traducción de audio
+                            </h2>
+
+                            <p>
+                                Selecciona un archivo de audio en español
+                                o inglés. La IA transcribirá el contenido
+                                hablado y generará su traducción.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         SELECTORES DE IDIOMA
+                    ========================================== -->
+
+                    <div class="language-selector">
+
+                        <div class="language-control">
+
+                            <label for="audioSourceLanguage">
+                                Idioma de origen
+                            </label>
+
+                            <select
+                                id="audioSourceLanguage"
+                                class="form-select"
+                            >
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <button
+                            id="audioSwapLanguagesButton"
+                            class="swap-button"
+                            type="button"
+                            aria-label="Intercambiar idiomas"
+                            title="Intercambiar idiomas"
+                        >
+                            ⇄
+                        </button>
+
+
+                        <div class="language-control">
+
+                            <label for="audioTargetLanguage">
+                                Idioma de destino
+                            </label>
+
+                            <select
+                                id="audioTargetLanguage"
+                                class="form-select"
+                            >
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         DIRECCIÓN
+                    ========================================== -->
+
+                    <div
+                        id="audioTranslationDirection"
+                        class="translation-direction"
+                    >
+                        Español → English
+                    </div>
+
+
+                    <!-- =========================================
+                         FORMULARIO DE AUDIO
+                    ========================================== -->
+
+                    <form id="audioForm">
+
+                        <div class="input-section">
+
+                            <label
+                                for="audioInput"
+                                class="input-label"
+                            >
+                                Selecciona un archivo de audio
+                            </label>
+
+
+                            <input
+                                id="audioInput"
+                                class="form-control"
+                                type="file"
+                                accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/webm"
+                            >
+
+
+                            <div class="input-info">
+
+                                <span>
+                                    Formatos permitidos:
+                                    MP3, WAV, M4A y WebM
+                                </span>
+
+                                <span>
+                                    Máximo 3 MB
+                                </span>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 INFORMACIÓN DEL AUDIO
+                            ================================== -->
+
+                            <div
+                                class="card border-0 bg-light mt-3 mb-3"
+                            >
+
+                                <div class="card-body">
+
+                                    <h3 class="h6 mb-3">
+                                        Audio seleccionado
+                                    </h3>
+
+
+                                    <div
+                                        id="audioFilePlaceholder"
+                                        class="text-center text-secondary py-4"
+                                    >
+
+                                        <div class="fs-1 mb-2">
+                                            🎧
+                                        </div>
+
+                                        <p class="mb-0">
+                                            Aquí aparecerá la información
+                                            del audio seleccionado.
+                                        </p>
+
+                                    </div>
+
+
+                                    <div
+                                        id="audioFileInfo"
+                                        class="d-none"
+                                    >
+
+                                        <div
+                                            class="d-flex align-items-center gap-3 mb-3"
+                                        >
+
+                                            <div class="fs-2">
+                                                🎙️
+                                            </div>
+
+                                            <div>
+
+                                                <strong
+                                                    id="audioFileName"
+                                                    class="d-block"
+                                                >
+                                                    -
+                                                </strong>
+
+                                                <small
+                                                    id="audioFileSize"
+                                                    class="text-secondary"
+                                                >
+                                                    -
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <audio
+                                            id="audioPreview"
+                                            class="w-100"
+                                            controls
+                                        ></audio>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 BOTÓN
+                            ================================== -->
+
+                            <button
+                                id="audioTranslateButton"
+                                class="send-button"
+                                type="submit"
+                                disabled
+                            >
+                                Traducir audio
+                            </button>
+
+
+                            <div
+                                id="audioFormMessage"
+                                class="form-message"
+                                role="alert"
+                            ></div>
+
+                        </div>
+
+                    </form>
+
+
+                    <!-- =========================================
+                         RESULTADOS
+                    ========================================== -->
+
+                    <div
+                        id="audioResults"
+                        class="input-section border-top d-none"
+                    >
+
+                        <div class="mb-3">
+
+                            <small class="text-secondary">
+                                Audio procesado
+                            </small>
+
+                            <strong
+                                id="processedAudioName"
+                                class="d-block"
+                            >
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <h3 class="h6">
+                                Transcripción
+                            </h3>
+
+                            <div
+                                class="card border-0 bg-light"
+                            >
+
+                                <div class="card-body">
+
+                                    <p
+                                        id="audioTranscription"
+                                        class="mb-0"
+                                        style="white-space: pre-wrap;"
+                                    ></p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <h3 class="h6">
+                                Traducción
+                            </h3>
+
+                            <div
+                                class="card border-0 bg-light"
+                            >
+
+                                <div class="card-body">
+
+                                    <p
+                                        id="audioTranslatedText"
+                                        class="mb-0"
+                                        style="white-space: pre-wrap;"
+                                    ></p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-12">
+
+                                <div
+                                    class="card border-0 bg-light h-100"
+                                >
+
+                                    <div class="card-body">
+
+                                        <small
+                                            class="text-secondary d-block"
+                                        >
+                                            Idioma detectado
+                                        </small>
+
+                                        <strong
+                                            id="detectedAudioLanguage"
+                                        >
+                                            -
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="audioWarning"
+                            class="alert alert-warning mt-3 mb-0 d-none"
+                            role="alert"
+                        ></div>
+
+                    </div>
 
                 </div>
 
