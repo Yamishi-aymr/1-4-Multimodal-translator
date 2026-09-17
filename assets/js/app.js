@@ -14,6 +14,9 @@ const DOCUMENT_API_URL =
 const AUDIO_API_URL =
     "https://1-4-multimodal-translator.vercel.app/api/audio";
 
+const SPEECH_API_URL =
+    "https://1-4-multimodal-translator.vercel.app/api/speech";
+
 
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_MESSAGES = 8;
@@ -1794,6 +1797,31 @@ class AudioTranslationApp {
 
 
         /* ====================================================
+           VOZ DE LA TRADUCCIÓN
+        ==================================================== */
+
+        this.speechButton =
+            document.getElementById(
+                "audioSpeechButton"
+            );
+
+        this.speechStatus =
+            document.getElementById(
+                "audioSpeechStatus"
+            );
+
+        this.speechPlayerContainer =
+            document.getElementById(
+                "audioSpeechPlayerContainer"
+            );
+
+        this.speechPlayer =
+            document.getElementById(
+                "audioSpeechPlayer"
+            );
+
+
+        /* ====================================================
            ESTADO GLOBAL
         ==================================================== */
 
@@ -1838,6 +1866,19 @@ class AudioTranslationApp {
         this.isRecording = false;
 
         this.isProcessing = false;
+
+
+        /* ====================================================
+           ESTADO DE VOZ
+        ==================================================== */
+
+        this.speechUrl = null;
+
+        this.speechText = "";
+
+        this.speechTargetLanguage = "";
+
+        this.isGeneratingSpeech = false;
 
 
         this.languageNames = {
@@ -1928,11 +1969,25 @@ class AudioTranslationApp {
         }
 
 
+        if (this.speechButton) {
+
+            this.speechButton.addEventListener(
+                "click",
+                () => {
+
+                    this.handleSpeech();
+                }
+            );
+        }
+
+
         window.addEventListener(
             "beforeunload",
             () => {
 
                 this.cleanupRecordingResources();
+
+                this.cleanupSpeech();
             }
         );
 
@@ -3056,7 +3111,8 @@ class AudioTranslationApp {
 
         const locked =
             this.isProcessing ||
-            this.isRecording;
+            this.isRecording ||
+            this.isGeneratingSpeech;
 
 
         this.fileInput.disabled =
@@ -3092,6 +3148,14 @@ class AudioTranslationApp {
             locked ||
             !this.audioData ||
             !this.selectedFile;
+
+
+        if (this.speechButton) {
+
+            this.speechButton.disabled =
+                locked ||
+                !this.speechText;
+        }
     }
 
 
@@ -3239,6 +3303,13 @@ class AudioTranslationApp {
                     "No hay contenido disponible para traducir.";
 
 
+                this.speechText = "";
+
+                this.speechTargetLanguage = "";
+
+                this.updateControls();
+
+
                 this.detectedLanguage.textContent =
                     this.languageNames[
                         data.detected_language
@@ -3282,6 +3353,16 @@ class AudioTranslationApp {
             this.translatedText.textContent =
                 data.translation ||
                 "No se recibió una traducción.";
+
+
+            this.speechText =
+                data.translation ||
+                "";
+
+            this.speechTargetLanguage =
+                target;
+
+            this.updateControls();
 
 
             this.detectedLanguage.textContent =
@@ -3382,7 +3463,309 @@ class AudioTranslationApp {
         this.detectedLanguage.textContent = "-";
 
 
+        this.cleanupSpeech();
+
         this.hideWarning();
+
+        this.updateControls();
+    }
+
+
+    /* ========================================================
+       ESCUCHAR TRADUCCIÓN
+    ======================================================== */
+
+    async handleSpeech() {
+
+        if (
+            !this.speechText ||
+            !this.speechTargetLanguage
+        ) {
+
+            this.showSpeechStatus(
+                "No hay una traducción disponible para escuchar."
+            );
+
+            return;
+        }
+
+
+        if (
+            this.speechUrl &&
+            this.speechPlayer
+        ) {
+
+            try {
+
+                await this.speechPlayer.play();
+
+                this.showSpeechStatus(
+                    "Reproduciendo traducción."
+                );
+
+            }
+            catch {
+
+                this.showSpeechStatus(
+                    "El audio está listo. Pulsa reproducir en el reproductor."
+                );
+            }
+
+            return;
+        }
+
+
+        this.isGeneratingSpeech = true;
+
+        this.showSpeechStatus(
+            "Generando voz..."
+        );
+
+
+        this.setStatus(
+            "loading",
+            "Generando voz..."
+        );
+
+
+        this.updateControls();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SPEECH_API_URL,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                text:
+                                    this.speechText,
+
+                                target_language:
+                                    this.speechTargetLanguage
+                            })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                let message =
+                    "No fue posible generar la voz de la traducción.";
+
+
+                try {
+
+                    const errorData =
+                        await response.json();
+
+
+                    if (
+                        errorData &&
+                        errorData.error
+                    ) {
+
+                        message =
+                            errorData.error;
+                    }
+
+                }
+                catch {
+
+                    // La respuesta de error no era JSON.
+                }
+
+
+                throw new Error(
+                    message
+                );
+            }
+
+
+            const audioBlob =
+                await response.blob();
+
+
+            if (
+                !audioBlob ||
+                audioBlob.size === 0
+            ) {
+
+                throw new Error(
+                    "El servidor no devolvió contenido de audio."
+                );
+            }
+
+
+            this.cleanupSpeechAudio();
+
+
+            this.speechUrl =
+                URL.createObjectURL(
+                    audioBlob
+                );
+
+
+            this.speechPlayer.src =
+                this.speechUrl;
+
+
+            this.speechPlayerContainer.classList.remove(
+                "d-none"
+            );
+
+
+            this.speechPlayer.load();
+
+
+            this.speechButton.textContent =
+                "🔊 Reproducir traducción";
+
+
+            this.showSpeechStatus(
+                "Audio generado correctamente."
+            );
+
+
+            this.setStatus(
+                "ready",
+                "Voz lista"
+            );
+
+
+            try {
+
+                await this.speechPlayer.play();
+
+                this.showSpeechStatus(
+                    "Reproduciendo traducción."
+                );
+
+            }
+            catch {
+
+                this.showSpeechStatus(
+                    "Audio listo. Pulsa reproducir en el reproductor."
+                );
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error al generar voz:",
+                error
+            );
+
+
+            this.showSpeechStatus(
+                error.message
+            );
+
+
+            this.setStatus(
+                "error",
+                "Error"
+            );
+        }
+        finally {
+
+            this.isGeneratingSpeech = false;
+
+            this.updateControls();
+        }
+    }
+
+
+    /* ========================================================
+       MENSAJE DE VOZ
+    ======================================================== */
+
+    showSpeechStatus(message = "") {
+
+        if (!this.speechStatus) {
+
+            return;
+        }
+
+
+        this.speechStatus.textContent =
+            message;
+    }
+
+
+    /* ========================================================
+       LIMPIAR AUDIO TTS
+    ======================================================== */
+
+    cleanupSpeechAudio() {
+
+        if (this.speechPlayer) {
+
+            this.speechPlayer.pause();
+
+            this.speechPlayer.removeAttribute(
+                "src"
+            );
+
+            this.speechPlayer.load();
+        }
+
+
+        if (this.speechUrl) {
+
+            URL.revokeObjectURL(
+                this.speechUrl
+            );
+
+            this.speechUrl = null;
+        }
+
+
+        if (this.speechPlayerContainer) {
+
+            this.speechPlayerContainer.classList.add(
+                "d-none"
+            );
+        }
+    }
+
+
+    /* ========================================================
+       LIMPIAR ESTADO DE VOZ
+    ======================================================== */
+
+    cleanupSpeech() {
+
+        this.cleanupSpeechAudio();
+
+
+        this.speechText = "";
+
+        this.speechTargetLanguage = "";
+
+
+        if (this.speechButton) {
+
+            this.speechButton.textContent =
+                "🔊 Escuchar traducción";
+
+            this.speechButton.disabled =
+                true;
+        }
+
+
+        this.showSpeechStatus();
     }
 
 
