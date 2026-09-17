@@ -1704,6 +1704,31 @@ class AudioTranslationApp {
 
 
         /* ====================================================
+           GRABACIÓN
+        ==================================================== */
+
+        this.recordButton =
+            document.getElementById(
+                "audioRecordButton"
+            );
+
+        this.stopButton =
+            document.getElementById(
+                "audioStopButton"
+            );
+
+        this.recordingStatus =
+            document.getElementById(
+                "audioRecordingStatus"
+            );
+
+        this.recordingTimer =
+            document.getElementById(
+                "audioRecordingTimer"
+            );
+
+
+        /* ====================================================
            INFORMACIÓN DEL AUDIO
         ==================================================== */
 
@@ -1790,6 +1815,31 @@ class AudioTranslationApp {
         this.previewUrl = null;
 
 
+        /* ====================================================
+           ESTADO DE GRABACIÓN
+        ==================================================== */
+
+        this.mediaRecorder = null;
+
+        this.mediaStream = null;
+
+        this.recordingChunks = [];
+
+        this.recordingMimeType = "";
+
+        this.recordingStartTime = 0;
+
+        this.recordingTimerInterval = null;
+
+        this.recordingAutoStopTimeout = null;
+
+        this.maxRecordingSeconds = 60;
+
+        this.isRecording = false;
+
+        this.isProcessing = false;
+
+
         this.languageNames = {
             es: "Español",
             en: "English",
@@ -1854,7 +1904,42 @@ class AudioTranslationApp {
         );
 
 
+        if (this.recordButton) {
+
+            this.recordButton.addEventListener(
+                "click",
+                () => {
+
+                    this.startRecording();
+                }
+            );
+        }
+
+
+        if (this.stopButton) {
+
+            this.stopButton.addEventListener(
+                "click",
+                () => {
+
+                    this.stopRecording();
+                }
+            );
+        }
+
+
+        window.addEventListener(
+            "beforeunload",
+            () => {
+
+                this.cleanupRecordingResources();
+            }
+        );
+
+
         this.updateLanguageDirection();
+
+        this.updateControls();
     }
 
 
@@ -1961,8 +2046,6 @@ class AudioTranslationApp {
 
         this.clearResults();
 
-        this.resetSelectedFile();
-
 
         const file =
             this.fileInput.files[0];
@@ -1970,8 +2053,33 @@ class AudioTranslationApp {
 
         if (!file) {
 
+            this.resetSelectedFile(
+                false
+            );
+
             return;
         }
+
+
+        this.loadAudioFile(
+            file,
+            true
+        );
+    }
+
+
+    /* ========================================================
+       CARGAR AUDIO
+    ======================================================== */
+
+    loadAudioFile(
+        file,
+        clearInputOnError = false
+    ) {
+
+        this.resetSelectedFile(
+            false
+        );
 
 
         const extension =
@@ -1991,7 +2099,13 @@ class AudioTranslationApp {
             );
 
 
-            this.fileInput.value = "";
+            if (clearInputOnError) {
+
+                this.fileInput.value = "";
+            }
+
+
+            this.updateControls();
 
             return;
         }
@@ -2009,7 +2123,13 @@ class AudioTranslationApp {
             );
 
 
-            this.fileInput.value = "";
+            if (clearInputOnError) {
+
+                this.fileInput.value = "";
+            }
+
+
+            this.updateControls();
 
             return;
         }
@@ -2025,7 +2145,13 @@ class AudioTranslationApp {
             );
 
 
-            this.fileInput.value = "";
+            if (clearInputOnError) {
+
+                this.fileInput.value = "";
+            }
+
+
+            this.updateControls();
 
             return;
         }
@@ -2038,7 +2164,13 @@ class AudioTranslationApp {
             );
 
 
-            this.fileInput.value = "";
+            if (clearInputOnError) {
+
+                this.fileInput.value = "";
+            }
+
+
+            this.updateControls();
 
             return;
         }
@@ -2068,23 +2200,22 @@ class AudioTranslationApp {
                 );
 
 
-                this.translateButton.disabled =
-                    false;
-
-
                 this.setStatus(
                     "ready",
                     "Audio listo"
                 );
+
+
+                this.updateControls();
             };
 
 
         reader.onerror =
             () => {
 
-                this.resetSelectedFile();
-
-                this.fileInput.value = "";
+                this.resetSelectedFile(
+                    clearInputOnError
+                );
 
 
                 this.showFormMessage(
@@ -2102,6 +2233,647 @@ class AudioTranslationApp {
         reader.readAsDataURL(
             file
         );
+    }
+
+
+    /* ========================================================
+       INICIAR GRABACIÓN
+    ======================================================== */
+
+    async startRecording() {
+
+        this.showFormMessage();
+
+        this.clearResults();
+
+
+        if (
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia ||
+            typeof MediaRecorder === "undefined"
+        ) {
+
+            this.showFormMessage(
+                "Este navegador no permite grabar audio desde el micrófono."
+            );
+
+            return;
+        }
+
+
+        if (this.isRecording) {
+
+            return;
+        }
+
+
+        this.fileInput.value = "";
+
+        this.resetSelectedFile(
+            false
+        );
+
+
+        try {
+
+            this.mediaStream =
+                await navigator.mediaDevices.getUserMedia({
+                    audio: true
+                });
+
+
+            this.recordingMimeType =
+                this.getSupportedRecordingMimeType();
+
+
+            const recorderOptions =
+                this.recordingMimeType
+                    ? {
+                        mimeType:
+                            this.recordingMimeType
+                    }
+                    : undefined;
+
+
+            this.mediaRecorder =
+                recorderOptions
+                    ? new MediaRecorder(
+                        this.mediaStream,
+                        recorderOptions
+                    )
+                    : new MediaRecorder(
+                        this.mediaStream
+                    );
+
+
+            this.recordingChunks = [];
+
+
+            this.mediaRecorder.addEventListener(
+                "dataavailable",
+                (event) => {
+
+                    if (
+                        event.data &&
+                        event.data.size > 0
+                    ) {
+
+                        this.recordingChunks.push(
+                            event.data
+                        );
+                    }
+                }
+            );
+
+
+            this.mediaRecorder.addEventListener(
+                "stop",
+                () => {
+
+                    this.finishRecording();
+                },
+                {
+                    once: true
+                }
+            );
+
+
+            this.mediaRecorder.addEventListener(
+                "error",
+                () => {
+
+                    this.handleRecordingError(
+                        "Ocurrió un error durante la grabación."
+                    );
+                },
+                {
+                    once: true
+                }
+            );
+
+
+            this.isRecording = true;
+
+            this.recordingStartTime =
+                Date.now();
+
+
+            this.updateRecordingTimer();
+
+            this.recordingTimerInterval =
+                window.setInterval(
+                    () => {
+
+                        this.updateRecordingTimer();
+                    },
+                    250
+                );
+
+
+            this.recordingAutoStopTimeout =
+                window.setTimeout(
+                    () => {
+
+                        if (this.isRecording) {
+
+                            this.stopRecording();
+                        }
+                    },
+                    this.maxRecordingSeconds * 1000
+                );
+
+
+            this.mediaRecorder.start(
+                250
+            );
+
+
+            this.recordingStatus.textContent =
+                "🔴 Grabando... habla ahora";
+
+
+            this.setStatus(
+                "loading",
+                "Grabando audio..."
+            );
+
+
+            this.updateControls();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error al acceder al micrófono:",
+                error
+            );
+
+
+            this.cleanupRecordingResources();
+
+            this.isRecording = false;
+
+
+            let message =
+                "No fue posible acceder al micrófono.";
+
+
+            if (
+                error &&
+                error.name === "NotAllowedError"
+            ) {
+
+                message =
+                    "Permite el acceso al micrófono en el navegador para poder grabar.";
+            }
+            else if (
+                error &&
+                error.name === "NotFoundError"
+            ) {
+
+                message =
+                    "No se encontró ningún micrófono disponible.";
+            }
+
+
+            this.showFormMessage(
+                message
+            );
+
+
+            this.recordingStatus.textContent =
+                "Micrófono inactivo";
+
+
+            this.setStatus(
+                "error",
+                "Error"
+            );
+
+
+            this.updateControls();
+        }
+    }
+
+
+    /* ========================================================
+       DETENER GRABACIÓN
+    ======================================================== */
+
+    stopRecording() {
+
+        if (
+            !this.mediaRecorder ||
+            !this.isRecording
+        ) {
+
+            return;
+        }
+
+
+        this.isRecording = false;
+
+
+        this.recordingStatus.textContent =
+            "Procesando grabación...";
+
+
+        this.clearRecordingTimers();
+
+
+        if (
+            this.mediaRecorder.state !==
+            "inactive"
+        ) {
+
+            this.mediaRecorder.stop();
+        }
+
+
+        this.stopMediaStream();
+
+        this.updateControls();
+    }
+
+
+    /* ========================================================
+       FINALIZAR GRABACIÓN
+    ======================================================== */
+
+    finishRecording() {
+
+        try {
+
+            const recorderType =
+                this.mediaRecorder &&
+                this.mediaRecorder.mimeType
+                    ? this.mediaRecorder.mimeType
+                    : this.recordingMimeType;
+
+
+            const isMp4 =
+                String(
+                    recorderType
+                )
+                .toLowerCase()
+                .includes(
+                    "mp4"
+                );
+
+
+            const normalizedMimeType =
+                isMp4
+                    ? "audio/mp4"
+                    : "audio/webm";
+
+
+            const extension =
+                isMp4
+                    ? ".m4a"
+                    : ".webm";
+
+
+            const blob =
+                new Blob(
+                    this.recordingChunks,
+                    {
+                        type:
+                            normalizedMimeType
+                    }
+                );
+
+
+            this.cleanupRecordingResources();
+
+
+            if (blob.size === 0) {
+
+                this.showFormMessage(
+                    "La grabación está vacía. Intenta nuevamente."
+                );
+
+
+                this.recordingStatus.textContent =
+                    "Micrófono inactivo";
+
+
+                this.setStatus(
+                    "error",
+                    "Error"
+                );
+
+
+                this.updateControls();
+
+                return;
+            }
+
+
+            if (
+                blob.size >
+                MAX_AUDIO_SIZE
+            ) {
+
+                this.showFormMessage(
+                    "La grabación supera el límite de 3 MB. Intenta grabar un audio más corto."
+                );
+
+
+                this.recordingStatus.textContent =
+                    "Grabación demasiado grande";
+
+
+                this.setStatus(
+                    "error",
+                    "Error"
+                );
+
+
+                this.updateControls();
+
+                return;
+            }
+
+
+            const file =
+                new File(
+                    [
+                        blob
+                    ],
+                    this.createRecordingFilename(
+                        extension
+                    ),
+                    {
+                        type:
+                            normalizedMimeType,
+
+                        lastModified:
+                            Date.now()
+                    }
+                );
+
+
+            this.recordingStatus.textContent =
+                "Grabación lista";
+
+
+            this.loadAudioFile(
+                file,
+                false
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error al preparar la grabación:",
+                error
+            );
+
+
+            this.handleRecordingError(
+                "No fue posible preparar el audio grabado."
+            );
+        }
+    }
+
+
+    /* ========================================================
+       MIME PARA GRABACIÓN
+    ======================================================== */
+
+    getSupportedRecordingMimeType() {
+
+        const candidates = [
+            "audio/webm;codecs=opus",
+            "audio/webm",
+            "audio/mp4"
+        ];
+
+
+        for (
+            const candidate
+            of candidates
+        ) {
+
+            if (
+                MediaRecorder.isTypeSupported(
+                    candidate
+                )
+            ) {
+
+                return candidate;
+            }
+        }
+
+
+        return "";
+    }
+
+
+    /* ========================================================
+       NOMBRE DE GRABACIÓN
+    ======================================================== */
+
+    createRecordingFilename(extension) {
+
+        const now =
+            new Date();
+
+
+        const pad =
+            (value) =>
+                String(
+                    value
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+
+        const stamp =
+            `${now.getFullYear()}-${pad(
+                now.getMonth() + 1
+            )}-${pad(
+                now.getDate()
+            )}_${pad(
+                now.getHours()
+            )}-${pad(
+                now.getMinutes()
+            )}-${pad(
+                now.getSeconds()
+            )}`;
+
+
+        return `grabacion_${stamp}${extension}`;
+    }
+
+
+    /* ========================================================
+       TEMPORIZADOR
+    ======================================================== */
+
+    updateRecordingTimer() {
+
+        const elapsedSeconds =
+            Math.min(
+                Math.floor(
+                    (
+                        Date.now() -
+                        this.recordingStartTime
+                    ) /
+                    1000
+                ),
+                this.maxRecordingSeconds
+            );
+
+
+        this.recordingTimer.textContent =
+            this.formatDuration(
+                elapsedSeconds
+            );
+    }
+
+
+    formatDuration(seconds) {
+
+        const minutes =
+            Math.floor(
+                seconds / 60
+            );
+
+
+        const remainingSeconds =
+            seconds % 60;
+
+
+        return `${
+            String(
+                minutes
+            ).padStart(
+                2,
+                "0"
+            )
+        }:${
+            String(
+                remainingSeconds
+            ).padStart(
+                2,
+                "0"
+            )
+        }`;
+    }
+
+
+    /* ========================================================
+       LIMPIAR TEMPORIZADORES
+    ======================================================== */
+
+    clearRecordingTimers() {
+
+        if (
+            this.recordingTimerInterval
+        ) {
+
+            window.clearInterval(
+                this.recordingTimerInterval
+            );
+
+            this.recordingTimerInterval =
+                null;
+        }
+
+
+        if (
+            this.recordingAutoStopTimeout
+        ) {
+
+            window.clearTimeout(
+                this.recordingAutoStopTimeout
+            );
+
+            this.recordingAutoStopTimeout =
+                null;
+        }
+    }
+
+
+    /* ========================================================
+       DETENER MICRÓFONO
+    ======================================================== */
+
+    stopMediaStream() {
+
+        if (!this.mediaStream) {
+
+            return;
+        }
+
+
+        this.mediaStream
+            .getTracks()
+            .forEach(
+                (track) => {
+
+                    track.stop();
+                }
+            );
+
+
+        this.mediaStream =
+            null;
+    }
+
+
+    /* ========================================================
+       LIMPIAR RECURSOS DE GRABACIÓN
+    ======================================================== */
+
+    cleanupRecordingResources() {
+
+        this.clearRecordingTimers();
+
+        this.stopMediaStream();
+
+        this.recordingChunks = [];
+
+        this.recordingMimeType = "";
+
+        this.mediaRecorder = null;
+    }
+
+
+    /* ========================================================
+       ERROR DE GRABACIÓN
+    ======================================================== */
+
+    handleRecordingError(message) {
+
+        this.isRecording = false;
+
+        this.cleanupRecordingResources();
+
+
+        this.recordingStatus.textContent =
+            "Micrófono inactivo";
+
+
+        this.recordingTimer.textContent =
+            "00:00";
+
+
+        this.showFormMessage(
+            message
+        );
+
+
+        this.setStatus(
+            "error",
+            "Error"
+        );
+
+
+        this.updateControls();
     }
 
 
@@ -2220,15 +2992,19 @@ class AudioTranslationApp {
        RESTABLECER AUDIO
     ======================================================== */
 
-    resetSelectedFile() {
+    resetSelectedFile(
+        clearInput = false
+    ) {
 
         this.audioData = "";
 
         this.selectedFile = null;
 
 
-        this.translateButton.disabled =
-            true;
+        if (clearInput) {
+
+            this.fileInput.value = "";
+        }
 
 
         this.fileInfo.classList.add(
@@ -2266,6 +3042,56 @@ class AudioTranslationApp {
 
             this.previewUrl = null;
         }
+
+
+        this.updateControls();
+    }
+
+
+    /* ========================================================
+       ACTUALIZAR CONTROLES
+    ======================================================== */
+
+    updateControls() {
+
+        const locked =
+            this.isProcessing ||
+            this.isRecording;
+
+
+        this.fileInput.disabled =
+            locked;
+
+        this.sourceLanguage.disabled =
+            locked;
+
+        this.targetLanguage.disabled =
+            locked;
+
+        this.swapButton.disabled =
+            locked;
+
+
+        if (this.recordButton) {
+
+            this.recordButton.disabled =
+                this.isProcessing ||
+                this.isRecording;
+        }
+
+
+        if (this.stopButton) {
+
+            this.stopButton.disabled =
+                this.isProcessing ||
+                !this.isRecording;
+        }
+
+
+        this.translateButton.disabled =
+            locked ||
+            !this.audioData ||
+            !this.selectedFile;
     }
 
 
@@ -2288,7 +3114,7 @@ class AudioTranslationApp {
         ) {
 
             this.showFormMessage(
-                "Selecciona un audio antes de traducir."
+                "Selecciona o graba un audio antes de traducir."
             );
 
             return;
@@ -2473,7 +3299,6 @@ class AudioTranslationApp {
                 this.showWarning(
                     data.warning
                 );
-
             }
             else {
 
@@ -2523,29 +3348,17 @@ class AudioTranslationApp {
 
     setLoading(isLoading) {
 
-        this.fileInput.disabled =
+        this.isProcessing =
             isLoading;
-
-        this.sourceLanguage.disabled =
-            isLoading;
-
-        this.targetLanguage.disabled =
-            isLoading;
-
-        this.swapButton.disabled =
-            isLoading;
-
-
-        this.translateButton.disabled =
-            isLoading ||
-            !this.audioData ||
-            !this.selectedFile;
 
 
         this.translateButton.textContent =
             isLoading
                 ? "Transcribiendo y traduciendo..."
                 : "Traducir audio";
+
+
+        this.updateControls();
     }
 
 

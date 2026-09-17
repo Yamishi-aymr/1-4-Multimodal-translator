@@ -4,29 +4,18 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="description"
-        content="Traductor inteligente multimodal Español e Inglés mediante Inteligencia Artificial."
-    >
+    <meta name="description"
+        content="Traductor inteligente multimodal Español e Inglés mediante Inteligencia Artificial.">
 
     <title>Traductor Inteligente Multimodal</title>
 
     <!-- Bootstrap -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- CSS propio -->
-    <link
-        rel="stylesheet"
-        href="./assets/css/styles.css"
-    >
+    <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 
 <body>
@@ -39,10 +28,7 @@
 
         <div class="container">
 
-            <a
-                class="navbar-brand"
-                href="#"
-            >
+            <a class="navbar-brand" href="#">
                 <span class="brand-icon">
                     AI
                 </span>
@@ -55,10 +41,7 @@
 
             <div class="navbar-status">
 
-                <span
-                    id="statusIndicator"
-                    class="status-dot"
-                ></span>
+                <span id="statusIndicator" class="status-dot"></span>
 
                 <span id="statusText">
                     IA disponible
@@ -103,23 +86,12 @@
              MODALIDADES
         ================================================== -->
 
-        <section
-            class="mode-navigation"
-            role="tablist"
-        >
+        <section class="mode-navigation" role="tablist">
 
             <!-- CHAT -->
 
-            <button
-                id="chatModeButton"
-                class="mode-button active"
-                type="button"
-                data-bs-toggle="pill"
-                data-bs-target="#chatSection"
-                role="tab"
-                aria-controls="chatSection"
-                aria-selected="true"
-            >
+            <button id="chatModeButton" class="mode-button active" type="button" data-bs-toggle="pill"
+                data-bs-target="#chatSection" role="tab" aria-controls="chatSection" aria-selected="true">
 
                 <span class="mode-icon">
                     💬
@@ -134,16 +106,8 @@
 
             <!-- AUDIO -->
 
-            <button
-                id="audioModeButton"
-                class="mode-button"
-                type="button"
-                data-bs-toggle="pill"
-                data-bs-target="#audioSection"
-                role="tab"
-                aria-controls="audioSection"
-                aria-selected="false"
-            >
+            <button id="audioModeButton" class="mode-button" type="button" data-bs-toggle="pill"
+                data-bs-target="#audioSection" role="tab" aria-controls="audioSection" aria-selected="false">
 
                 <span class="mode-icon">
                     🎙️
@@ -158,16 +122,8 @@
 
             <!-- DOCUMENTOS -->
 
-            <button
-                id="documentModeButton"
-                class="mode-button"
-                type="button"
-                data-bs-toggle="pill"
-                data-bs-target="#documentSection"
-                role="tab"
-                aria-controls="documentSection"
-                aria-selected="false"
-            >
+            <button id="documentModeButton" class="mode-button" type="button" data-bs-toggle="pill"
+                data-bs-target="#documentSection" role="tab" aria-controls="documentSection" aria-selected="false">
 
                 <span class="mode-icon">
                     📄
@@ -182,16 +138,8 @@
 
             <!-- IMÁGENES -->
 
-            <button
-                id="imageModeButton"
-                class="mode-button"
-                type="button"
-                data-bs-toggle="pill"
-                data-bs-target="#imageSection"
-                role="tab"
-                aria-controls="imageSection"
-                aria-selected="false"
-            >
+            <button id="imageModeButton" class="mode-button" type="button" data-bs-toggle="pill"
+                data-bs-target="#imageSection" role="tab" aria-controls="imageSection" aria-selected="false">
 
                 <span class="mode-icon">
                     🖼️
@@ -217,12 +165,8 @@
                  MÓDULO CHAT
             ================================================== -->
 
-            <section
-                id="chatSection"
-                class="tab-pane fade show active"
-                role="tabpanel"
-                aria-labelledby="chatModeButton"
-            >
+            <section id="chatSection" class="tab-pane fade show active" role="tabpanel"
+                aria-labelledby="chatModeButton">
 
                 <div class="translator-panel">
 
@@ -247,11 +191,7 @@
                         </div>
 
 
-                        <button
-                            id="newConversationButton"
-                            class="btn-new-chat"
-                            type="button"
-                        >
+                        <button id="newConversationButton" class="btn-new-chat" type="button">
                             Nueva conversación
                         </button>
 
@@ -270,10 +210,7 @@
                                 Idioma de origen
                             </label>
 
-                            <select
-                                id="sourceLanguage"
-                                class="form-select"
-                            >
+                            <select id="sourceLanguage" class="form-select">
 
                                 <option value="es">
                                     Español
@@ -288,13 +225,8 @@
                         </div>
 
 
-                        <button
-                            id="swapLanguagesButton"
-                            class="swap-button"
-                            type="button"
-                            aria-label="Intercambiar idiomas"
-                            title="Intercambiar idiomas"
-                        >
+                        <button id="swapLanguagesButton" class="swap-button" type="button"
+                            aria-label="Intercambiar idiomas" title="Intercambiar idiomas">
                             ⇄
                         </button>
 
@@ -305,10 +237,7 @@
                                 Idioma de destino
                             </label>
 
-                            <select
-                                id="targetLanguage"
-                                class="form-select"
-                            >
+                            <select id="targetLanguage" class="form-select">
 
                                 <option value="en">
                                     English
@@ -329,10 +258,7 @@
                          DIRECCIÓN
                     ========================================== -->
 
-                    <div
-                        id="translationDirection"
-                        class="translation-direction"
-                    >
+                    <div id="translationDirection" class="translation-direction">
                         Español → English
                     </div>
 
@@ -341,16 +267,9 @@
                          CONVERSACIÓN
                     ========================================== -->
 
-                    <div
-                        id="conversation"
-                        class="conversation"
-                        aria-live="polite"
-                    >
+                    <div id="conversation" class="conversation" aria-live="polite">
 
-                        <div
-                            id="emptyConversation"
-                            class="empty-conversation"
-                        >
+                        <div id="emptyConversation" class="empty-conversation">
 
                             <div class="empty-icon">
                                 💬
@@ -379,21 +298,13 @@
 
                         <div class="input-section">
 
-                            <label
-                                for="messageInput"
-                                class="input-label"
-                            >
+                            <label for="messageInput" class="input-label">
                                 Mensaje
                             </label>
 
 
-                            <textarea
-                                id="messageInput"
-                                class="form-control message-input"
-                                rows="4"
-                                maxlength="2000"
-                                placeholder="Escribe aquí el mensaje que deseas traducir..."
-                            ></textarea>
+                            <textarea id="messageInput" class="form-control message-input" rows="4" maxlength="2000"
+                                placeholder="Escribe aquí el mensaje que deseas traducir..."></textarea>
 
 
                             <div class="input-info">
@@ -409,22 +320,14 @@
                             </div>
 
 
-                            <button
-                                id="sendButton"
-                                class="send-button"
-                                type="submit"
-                            >
+                            <button id="sendButton" class="send-button" type="submit">
                                 <span>
                                     Traducir mensaje
                                 </span>
                             </button>
 
 
-                            <div
-                                id="formMessage"
-                                class="form-message"
-                                role="alert"
-                            ></div>
+                            <div id="formMessage" class="form-message" role="alert"></div>
 
                         </div>
 
@@ -439,12 +342,7 @@
                  MÓDULO AUDIO
             ================================================== -->
 
-            <section
-                id="audioSection"
-                class="tab-pane fade"
-                role="tabpanel"
-                aria-labelledby="audioModeButton"
-            >
+            <section id="audioSection" class="tab-pane fade" role="tabpanel" aria-labelledby="audioModeButton">
 
                 <div class="translator-panel">
 
@@ -461,9 +359,10 @@
                             </h2>
 
                             <p>
-                                Selecciona un archivo de audio en español
-                                o inglés. La IA transcribirá el contenido
-                                hablado y generará su traducción.
+                                Sube un archivo de audio o graba tu voz
+                                directamente desde el micrófono. La IA
+                                transcribirá el contenido hablado y
+                                generará su traducción.
                             </p>
 
                         </div>
@@ -483,10 +382,7 @@
                                 Idioma de origen
                             </label>
 
-                            <select
-                                id="audioSourceLanguage"
-                                class="form-select"
-                            >
+                            <select id="audioSourceLanguage" class="form-select">
 
                                 <option value="es">
                                     Español
@@ -501,13 +397,8 @@
                         </div>
 
 
-                        <button
-                            id="audioSwapLanguagesButton"
-                            class="swap-button"
-                            type="button"
-                            aria-label="Intercambiar idiomas"
-                            title="Intercambiar idiomas"
-                        >
+                        <button id="audioSwapLanguagesButton" class="swap-button" type="button"
+                            aria-label="Intercambiar idiomas" title="Intercambiar idiomas">
                             ⇄
                         </button>
 
@@ -518,10 +409,7 @@
                                 Idioma de destino
                             </label>
 
-                            <select
-                                id="audioTargetLanguage"
-                                class="form-select"
-                            >
+                            <select id="audioTargetLanguage" class="form-select">
 
                                 <option value="en">
                                     English
@@ -542,10 +430,7 @@
                          DIRECCIÓN
                     ========================================== -->
 
-                    <div
-                        id="audioTranslationDirection"
-                        class="translation-direction"
-                    >
+                    <div id="audioTranslationDirection" class="translation-direction">
                         Español → English
                     </div>
 
@@ -558,20 +443,13 @@
 
                         <div class="input-section">
 
-                            <label
-                                for="audioInput"
-                                class="input-label"
-                            >
+                            <label for="audioInput" class="input-label">
                                 Selecciona un archivo de audio
                             </label>
 
 
-                            <input
-                                id="audioInput"
-                                class="form-control"
-                                type="file"
-                                accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/webm"
-                            >
+                            <input id="audioInput" class="form-control" type="file"
+                                accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/webm">
 
 
                             <div class="input-info">
@@ -589,12 +467,58 @@
 
 
                             <!-- =================================
+                                 GRABAR DESDE MICRÓFONO
+                            ================================== -->
+
+                            <div class="card border-0 bg-light mt-3 mb-3">
+
+                                <div class="card-body">
+
+                                    <h3 class="h6 mb-2">
+                                        Grabar desde el micrófono
+                                    </h3>
+
+                                    <p class="small text-secondary mb-3">
+                                        También puedes grabar tu voz directamente.
+                                        La grabación se detendrá automáticamente
+                                        después de 60 segundos.
+                                    </p>
+
+                                    <div class="d-flex flex-column flex-sm-row gap-2">
+
+                                        <button id="audioRecordButton" class="btn-new-chat flex-fill" type="button">
+                                            🎙️ Iniciar grabación
+                                        </button>
+
+                                        <button id="audioStopButton" class="btn-new-chat flex-fill" type="button"
+                                            disabled>
+                                            ⏹ Detener grabación
+                                        </button>
+
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center gap-3 mt-3">
+
+                                        <span id="audioRecordingStatus" class="small text-secondary" aria-live="polite">
+                                            Micrófono inactivo
+                                        </span>
+
+                                        <strong id="audioRecordingTimer" class="small">
+                                            00:00
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
                                  INFORMACIÓN DEL AUDIO
                             ================================== -->
 
-                            <div
-                                class="card border-0 bg-light mt-3 mb-3"
-                            >
+                            <div class="card border-0 bg-light mt-3 mb-3">
 
                                 <div class="card-body">
 
@@ -603,10 +527,7 @@
                                     </h3>
 
 
-                                    <div
-                                        id="audioFilePlaceholder"
-                                        class="text-center text-secondary py-4"
-                                    >
+                                    <div id="audioFilePlaceholder" class="text-center text-secondary py-4">
 
                                         <div class="fs-1 mb-2">
                                             🎧
@@ -620,14 +541,9 @@
                                     </div>
 
 
-                                    <div
-                                        id="audioFileInfo"
-                                        class="d-none"
-                                    >
+                                    <div id="audioFileInfo" class="d-none">
 
-                                        <div
-                                            class="d-flex align-items-center gap-3 mb-3"
-                                        >
+                                        <div class="d-flex align-items-center gap-3 mb-3">
 
                                             <div class="fs-2">
                                                 🎙️
@@ -635,17 +551,11 @@
 
                                             <div>
 
-                                                <strong
-                                                    id="audioFileName"
-                                                    class="d-block"
-                                                >
+                                                <strong id="audioFileName" class="d-block">
                                                     -
                                                 </strong>
 
-                                                <small
-                                                    id="audioFileSize"
-                                                    class="text-secondary"
-                                                >
+                                                <small id="audioFileSize" class="text-secondary">
                                                     -
                                                 </small>
 
@@ -654,11 +564,7 @@
                                         </div>
 
 
-                                        <audio
-                                            id="audioPreview"
-                                            class="w-100"
-                                            controls
-                                        ></audio>
+                                        <audio id="audioPreview" class="w-100" controls></audio>
 
                                     </div>
 
@@ -671,21 +577,12 @@
                                  BOTÓN
                             ================================== -->
 
-                            <button
-                                id="audioTranslateButton"
-                                class="send-button"
-                                type="submit"
-                                disabled
-                            >
+                            <button id="audioTranslateButton" class="send-button" type="submit" disabled>
                                 Traducir audio
                             </button>
 
 
-                            <div
-                                id="audioFormMessage"
-                                class="form-message"
-                                role="alert"
-                            ></div>
+                            <div id="audioFormMessage" class="form-message" role="alert"></div>
 
                         </div>
 
@@ -696,10 +593,7 @@
                          RESULTADOS
                     ========================================== -->
 
-                    <div
-                        id="audioResults"
-                        class="input-section border-top d-none"
-                    >
+                    <div id="audioResults" class="input-section border-top d-none">
 
                         <div class="mb-3">
 
@@ -707,10 +601,7 @@
                                 Audio procesado
                             </small>
 
-                            <strong
-                                id="processedAudioName"
-                                class="d-block"
-                            >
+                            <strong id="processedAudioName" class="d-block">
                                 -
                             </strong>
 
@@ -723,17 +614,11 @@
                                 Transcripción
                             </h3>
 
-                            <div
-                                class="card border-0 bg-light"
-                            >
+                            <div class="card border-0 bg-light">
 
                                 <div class="card-body">
 
-                                    <p
-                                        id="audioTranscription"
-                                        class="mb-0"
-                                        style="white-space: pre-wrap;"
-                                    ></p>
+                                    <p id="audioTranscription" class="mb-0" style="white-space: pre-wrap;"></p>
 
                                 </div>
 
@@ -748,17 +633,11 @@
                                 Traducción
                             </h3>
 
-                            <div
-                                class="card border-0 bg-light"
-                            >
+                            <div class="card border-0 bg-light">
 
                                 <div class="card-body">
 
-                                    <p
-                                        id="audioTranslatedText"
-                                        class="mb-0"
-                                        style="white-space: pre-wrap;"
-                                    ></p>
+                                    <p id="audioTranslatedText" class="mb-0" style="white-space: pre-wrap;"></p>
 
                                 </div>
 
@@ -771,21 +650,15 @@
 
                             <div class="col-md-12">
 
-                                <div
-                                    class="card border-0 bg-light h-100"
-                                >
+                                <div class="card border-0 bg-light h-100">
 
                                     <div class="card-body">
 
-                                        <small
-                                            class="text-secondary d-block"
-                                        >
+                                        <small class="text-secondary d-block">
                                             Idioma detectado
                                         </small>
 
-                                        <strong
-                                            id="detectedAudioLanguage"
-                                        >
+                                        <strong id="detectedAudioLanguage">
                                             -
                                         </strong>
 
@@ -798,11 +671,7 @@
                         </div>
 
 
-                        <div
-                            id="audioWarning"
-                            class="alert alert-warning mt-3 mb-0 d-none"
-                            role="alert"
-                        ></div>
+                        <div id="audioWarning" class="alert alert-warning mt-3 mb-0 d-none" role="alert"></div>
 
                     </div>
 
@@ -815,12 +684,7 @@
                  MÓDULO DOCUMENTOS
             ================================================== -->
 
-            <section
-                id="documentSection"
-                class="tab-pane fade"
-                role="tabpanel"
-                aria-labelledby="documentModeButton"
-            >
+            <section id="documentSection" class="tab-pane fade" role="tabpanel" aria-labelledby="documentModeButton">
 
                 <div class="translator-panel">
 
@@ -859,10 +723,7 @@
                                 Idioma de origen
                             </label>
 
-                            <select
-                                id="documentSourceLanguage"
-                                class="form-select"
-                            >
+                            <select id="documentSourceLanguage" class="form-select">
 
                                 <option value="es">
                                     Español
@@ -877,13 +738,8 @@
                         </div>
 
 
-                        <button
-                            id="documentSwapLanguagesButton"
-                            class="swap-button"
-                            type="button"
-                            aria-label="Intercambiar idiomas"
-                            title="Intercambiar idiomas"
-                        >
+                        <button id="documentSwapLanguagesButton" class="swap-button" type="button"
+                            aria-label="Intercambiar idiomas" title="Intercambiar idiomas">
                             ⇄
                         </button>
 
@@ -894,10 +750,7 @@
                                 Idioma de destino
                             </label>
 
-                            <select
-                                id="documentTargetLanguage"
-                                class="form-select"
-                            >
+                            <select id="documentTargetLanguage" class="form-select">
 
                                 <option value="en">
                                     English
@@ -918,10 +771,7 @@
                          DIRECCIÓN
                     ========================================== -->
 
-                    <div
-                        id="documentTranslationDirection"
-                        class="translation-direction"
-                    >
+                    <div id="documentTranslationDirection" class="translation-direction">
                         Español → English
                     </div>
 
@@ -934,20 +784,13 @@
 
                         <div class="input-section">
 
-                            <label
-                                for="documentInput"
-                                class="input-label"
-                            >
+                            <label for="documentInput" class="input-label">
                                 Selecciona un documento
                             </label>
 
 
-                            <input
-                                id="documentInput"
-                                class="form-control"
-                                type="file"
-                                accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            >
+                            <input id="documentInput" class="form-control" type="file"
+                                accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
 
 
                             <div class="input-info">
@@ -968,9 +811,7 @@
                                  INFORMACIÓN DEL ARCHIVO
                             ================================== -->
 
-                            <div
-                                class="card border-0 bg-light mt-3 mb-3"
-                            >
+                            <div class="card border-0 bg-light mt-3 mb-3">
 
                                 <div class="card-body">
 
@@ -979,10 +820,7 @@
                                     </h3>
 
 
-                                    <div
-                                        id="documentFilePlaceholder"
-                                        class="text-center text-secondary py-4"
-                                    >
+                                    <div id="documentFilePlaceholder" class="text-center text-secondary py-4">
 
                                         <div class="fs-1 mb-2">
                                             📄
@@ -996,14 +834,9 @@
                                     </div>
 
 
-                                    <div
-                                        id="documentFileInfo"
-                                        class="d-none"
-                                    >
+                                    <div id="documentFileInfo" class="d-none">
 
-                                        <div
-                                            class="d-flex align-items-center gap-3"
-                                        >
+                                        <div class="d-flex align-items-center gap-3">
 
                                             <div class="fs-2">
                                                 📄
@@ -1012,18 +845,12 @@
 
                                             <div>
 
-                                                <strong
-                                                    id="documentFileName"
-                                                    class="d-block"
-                                                >
+                                                <strong id="documentFileName" class="d-block">
                                                     -
                                                 </strong>
 
 
-                                                <small
-                                                    id="documentFileSize"
-                                                    class="text-secondary"
-                                                >
+                                                <small id="documentFileSize" class="text-secondary">
                                                     -
                                                 </small>
 
@@ -1042,21 +869,12 @@
                                  BOTÓN
                             ================================== -->
 
-                            <button
-                                id="documentTranslateButton"
-                                class="send-button"
-                                type="submit"
-                                disabled
-                            >
+                            <button id="documentTranslateButton" class="send-button" type="submit" disabled>
                                 Traducir documento
                             </button>
 
 
-                            <div
-                                id="documentFormMessage"
-                                class="form-message"
-                                role="alert"
-                            ></div>
+                            <div id="documentFormMessage" class="form-message" role="alert"></div>
 
                         </div>
 
@@ -1067,10 +885,7 @@
                          RESULTADOS
                     ========================================== -->
 
-                    <div
-                        id="documentResults"
-                        class="input-section border-top d-none"
-                    >
+                    <div id="documentResults" class="input-section border-top d-none">
 
                         <!-- =====================================
                              ARCHIVO
@@ -1082,10 +897,7 @@
                                 Documento procesado
                             </small>
 
-                            <strong
-                                id="processedDocumentName"
-                                class="d-block"
-                            >
+                            <strong id="processedDocumentName" class="d-block">
                                 -
                             </strong>
 
@@ -1102,17 +914,11 @@
                                 Texto original
                             </h3>
 
-                            <div
-                                class="card border-0 bg-light"
-                            >
+                            <div class="card border-0 bg-light">
 
                                 <div class="card-body">
 
-                                    <p
-                                        id="documentOriginalText"
-                                        class="mb-0"
-                                        style="white-space: pre-wrap;"
-                                    ></p>
+                                    <p id="documentOriginalText" class="mb-0" style="white-space: pre-wrap;"></p>
 
                                 </div>
 
@@ -1131,17 +937,11 @@
                                 Traducción
                             </h3>
 
-                            <div
-                                class="card border-0 bg-light"
-                            >
+                            <div class="card border-0 bg-light">
 
                                 <div class="card-body">
 
-                                    <p
-                                        id="documentTranslatedText"
-                                        class="mb-0"
-                                        style="white-space: pre-wrap;"
-                                    ></p>
+                                    <p id="documentTranslatedText" class="mb-0" style="white-space: pre-wrap;"></p>
 
                                 </div>
 
@@ -1158,21 +958,15 @@
 
                             <div class="col-md-12">
 
-                                <div
-                                    class="card border-0 bg-light h-100"
-                                >
+                                <div class="card border-0 bg-light h-100">
 
                                     <div class="card-body">
 
-                                        <small
-                                            class="text-secondary d-block"
-                                        >
+                                        <small class="text-secondary d-block">
                                             Idioma detectado
                                         </small>
 
-                                        <strong
-                                            id="detectedDocumentLanguage"
-                                        >
+                                        <strong id="detectedDocumentLanguage">
                                             -
                                         </strong>
 
@@ -1189,11 +983,7 @@
                              ADVERTENCIA
                         ====================================== -->
 
-                        <div
-                            id="documentWarning"
-                            class="alert alert-warning mt-3 mb-0 d-none"
-                            role="alert"
-                        ></div>
+                        <div id="documentWarning" class="alert alert-warning mt-3 mb-0 d-none" role="alert"></div>
 
                     </div>
 
@@ -1206,12 +996,7 @@
                  MÓDULO IMÁGENES
             ================================================== -->
 
-            <section
-                id="imageSection"
-                class="tab-pane fade"
-                role="tabpanel"
-                aria-labelledby="imageModeButton"
-            >
+            <section id="imageSection" class="tab-pane fade" role="tabpanel" aria-labelledby="imageModeButton">
 
                 <div class="translator-panel">
 
@@ -1251,10 +1036,7 @@
                                 Idioma de origen
                             </label>
 
-                            <select
-                                id="imageSourceLanguage"
-                                class="form-select"
-                            >
+                            <select id="imageSourceLanguage" class="form-select">
 
                                 <option value="es">
                                     Español
@@ -1269,13 +1051,8 @@
                         </div>
 
 
-                        <button
-                            id="imageSwapLanguagesButton"
-                            class="swap-button"
-                            type="button"
-                            aria-label="Intercambiar idiomas"
-                            title="Intercambiar idiomas"
-                        >
+                        <button id="imageSwapLanguagesButton" class="swap-button" type="button"
+                            aria-label="Intercambiar idiomas" title="Intercambiar idiomas">
                             ⇄
                         </button>
 
@@ -1286,10 +1063,7 @@
                                 Idioma de destino
                             </label>
 
-                            <select
-                                id="imageTargetLanguage"
-                                class="form-select"
-                            >
+                            <select id="imageTargetLanguage" class="form-select">
 
                                 <option value="en">
                                     English
@@ -1310,10 +1084,7 @@
                          DIRECCIÓN
                     ========================================== -->
 
-                    <div
-                        id="imageTranslationDirection"
-                        class="translation-direction"
-                    >
+                    <div id="imageTranslationDirection" class="translation-direction">
                         Español → English
                     </div>
 
@@ -1326,20 +1097,13 @@
 
                         <div class="input-section">
 
-                            <label
-                                for="imageInput"
-                                class="input-label"
-                            >
+                            <label for="imageInput" class="input-label">
                                 Selecciona una imagen
                             </label>
 
 
-                            <input
-                                id="imageInput"
-                                class="form-control"
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                            >
+                            <input id="imageInput" class="form-control" type="file"
+                                accept="image/jpeg,image/png,image/webp">
 
 
                             <div class="input-info">
@@ -1360,9 +1124,7 @@
                                  VISTA PREVIA
                             ================================== -->
 
-                            <div
-                                class="card border-0 bg-light mt-3 mb-3"
-                            >
+                            <div class="card border-0 bg-light mt-3 mb-3">
 
                                 <div class="card-body">
 
@@ -1371,10 +1133,7 @@
                                     </h3>
 
 
-                                    <div
-                                        id="imagePreviewPlaceholder"
-                                        class="text-center text-secondary py-5"
-                                    >
+                                    <div id="imagePreviewPlaceholder" class="text-center text-secondary py-5">
 
                                         <div class="fs-1 mb-2">
                                             🖼️
@@ -1388,11 +1147,8 @@
                                     </div>
 
 
-                                    <img
-                                        id="imagePreview"
-                                        class="img-fluid rounded mx-auto d-none"
-                                        alt="Vista previa de la imagen seleccionada"
-                                    >
+                                    <img id="imagePreview" class="img-fluid rounded mx-auto d-none"
+                                        alt="Vista previa de la imagen seleccionada">
 
                                 </div>
 
@@ -1403,21 +1159,12 @@
                                  BOTÓN
                             ================================== -->
 
-                            <button
-                                id="imageTranslateButton"
-                                class="send-button"
-                                type="submit"
-                                disabled
-                            >
+                            <button id="imageTranslateButton" class="send-button" type="submit" disabled>
                                 Traducir imagen
                             </button>
 
 
-                            <div
-                                id="imageFormMessage"
-                                class="form-message"
-                                role="alert"
-                            ></div>
+                            <div id="imageFormMessage" class="form-message" role="alert"></div>
 
                         </div>
 
@@ -1428,10 +1175,7 @@
                          RESULTADOS
                     ========================================== -->
 
-                    <div
-                        id="imageResults"
-                        class="input-section border-top d-none"
-                    >
+                    <div id="imageResults" class="input-section border-top d-none">
 
                         <div class="mb-4">
 
@@ -1439,16 +1183,11 @@
                                 Texto detectado
                             </h3>
 
-                            <div
-                                class="card border-0 bg-light"
-                            >
+                            <div class="card border-0 bg-light">
 
                                 <div class="card-body">
 
-                                    <p
-                                        id="detectedImageText"
-                                        class="mb-0"
-                                    ></p>
+                                    <p id="detectedImageText" class="mb-0"></p>
 
                                 </div>
 
@@ -1463,16 +1202,11 @@
                                 Traducción
                             </h3>
 
-                            <div
-                                class="card border-0 bg-light"
-                            >
+                            <div class="card border-0 bg-light">
 
                                 <div class="card-body">
 
-                                    <p
-                                        id="translatedImageText"
-                                        class="mb-0"
-                                    ></p>
+                                    <p id="translatedImageText" class="mb-0"></p>
 
                                 </div>
 
@@ -1489,21 +1223,15 @@
 
                             <div class="col-md-6">
 
-                                <div
-                                    class="card border-0 bg-light h-100"
-                                >
+                                <div class="card border-0 bg-light h-100">
 
                                     <div class="card-body">
 
-                                        <small
-                                            class="text-secondary d-block"
-                                        >
+                                        <small class="text-secondary d-block">
                                             Idioma detectado
                                         </small>
 
-                                        <strong
-                                            id="detectedImageLanguage"
-                                        >
+                                        <strong id="detectedImageLanguage">
                                             -
                                         </strong>
 
@@ -1516,21 +1244,15 @@
 
                             <div class="col-md-6">
 
-                                <div
-                                    class="card border-0 bg-light h-100"
-                                >
+                                <div class="card border-0 bg-light h-100">
 
                                     <div class="card-body">
 
-                                        <small
-                                            class="text-secondary d-block"
-                                        >
+                                        <small class="text-secondary d-block">
                                             Nivel de certeza
                                         </small>
 
-                                        <strong
-                                            id="imageConfidence"
-                                        >
+                                        <strong id="imageConfidence">
                                             -
                                         </strong>
 
@@ -1547,11 +1269,7 @@
                              ADVERTENCIA
                         ====================================== -->
 
-                        <div
-                            id="imageWarning"
-                            class="alert alert-warning mt-3 mb-0 d-none"
-                            role="alert"
-                        ></div>
+                        <div id="imageWarning" class="alert alert-warning mt-3 mb-0 d-none" role="alert"></div>
 
                     </div>
 
@@ -1591,11 +1309,6 @@
 
     </main>
 
-
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
-
     <footer class="app-footer">
 
         <div class="container footer-content">
@@ -1628,12 +1341,20 @@
         </div>
 
     </footer>
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    ></script>
-    <script
-        src="./assets/js/app.js"
-    ></script>
+
+
+    <!-- =====================================================
+         BOOTSTRAP
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- =====================================================
+         JAVASCRIPT PROPIO
+    ====================================================== -->
+
+    <script src="./assets/js/app.js"></script>
 
 </body>
 
