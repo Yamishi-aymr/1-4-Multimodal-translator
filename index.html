@@ -159,10 +159,14 @@
             <!-- DOCUMENTOS -->
 
             <button
+                id="documentModeButton"
                 class="mode-button"
                 type="button"
-                disabled
-                title="Disponible próximamente"
+                data-bs-toggle="pill"
+                data-bs-target="#documentSection"
+                role="tab"
+                aria-controls="documentSection"
+                aria-selected="false"
             >
 
                 <span class="mode-icon">
@@ -172,10 +176,6 @@
                 <span>
                     Documentos
                 </span>
-
-                <small>
-                    Próximamente
-                </small>
 
             </button>
 
@@ -326,7 +326,7 @@
 
 
                     <!-- =========================================
-                         DIRECCIÓN DE TRADUCCIÓN
+                         DIRECCIÓN
                     ========================================== -->
 
                     <div
@@ -429,6 +429,397 @@
                         </div>
 
                     </form>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 MÓDULO DOCUMENTOS
+            ================================================== -->
+
+            <section
+                id="documentSection"
+                class="tab-pane fade"
+                role="tabpanel"
+                aria-labelledby="documentModeButton"
+            >
+
+                <div class="translator-panel">
+
+                    <!-- =========================================
+                         CABECERA
+                    ========================================== -->
+
+                    <div class="chat-header">
+
+                        <div>
+
+                            <h2>
+                                Traducción de documentos
+                            </h2>
+
+                            <p>
+                                Selecciona un documento en español o
+                                inglés. La IA analizará su contenido
+                                y generará una traducción.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         SELECTORES DE IDIOMA
+                    ========================================== -->
+
+                    <div class="language-selector">
+
+                        <div class="language-control">
+
+                            <label for="documentSourceLanguage">
+                                Idioma de origen
+                            </label>
+
+                            <select
+                                id="documentSourceLanguage"
+                                class="form-select"
+                            >
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <button
+                            id="documentSwapLanguagesButton"
+                            class="swap-button"
+                            type="button"
+                            aria-label="Intercambiar idiomas"
+                            title="Intercambiar idiomas"
+                        >
+                            ⇄
+                        </button>
+
+
+                        <div class="language-control">
+
+                            <label for="documentTargetLanguage">
+                                Idioma de destino
+                            </label>
+
+                            <select
+                                id="documentTargetLanguage"
+                                class="form-select"
+                            >
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                                <option value="es">
+                                    Español
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         DIRECCIÓN
+                    ========================================== -->
+
+                    <div
+                        id="documentTranslationDirection"
+                        class="translation-direction"
+                    >
+                        Español → English
+                    </div>
+
+
+                    <!-- =========================================
+                         FORMULARIO
+                    ========================================== -->
+
+                    <form id="documentForm">
+
+                        <div class="input-section">
+
+                            <label
+                                for="documentInput"
+                                class="input-label"
+                            >
+                                Selecciona un documento
+                            </label>
+
+
+                            <input
+                                id="documentInput"
+                                class="form-control"
+                                type="file"
+                                accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            >
+
+
+                            <div class="input-info">
+
+                                <span>
+                                    Formatos permitidos:
+                                    PDF, TXT y DOCX
+                                </span>
+
+                                <span>
+                                    Máximo 2 MB
+                                </span>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 INFORMACIÓN DEL ARCHIVO
+                            ================================== -->
+
+                            <div
+                                class="card border-0 bg-light mt-3 mb-3"
+                            >
+
+                                <div class="card-body">
+
+                                    <h3 class="h6 mb-3">
+                                        Documento seleccionado
+                                    </h3>
+
+
+                                    <div
+                                        id="documentFilePlaceholder"
+                                        class="text-center text-secondary py-4"
+                                    >
+
+                                        <div class="fs-1 mb-2">
+                                            📄
+                                        </div>
+
+                                        <p class="mb-0">
+                                            Aquí aparecerá la información
+                                            del documento seleccionado.
+                                        </p>
+
+                                    </div>
+
+
+                                    <div
+                                        id="documentFileInfo"
+                                        class="d-none"
+                                    >
+
+                                        <div
+                                            class="d-flex align-items-center gap-3"
+                                        >
+
+                                            <div class="fs-2">
+                                                📄
+                                            </div>
+
+
+                                            <div>
+
+                                                <strong
+                                                    id="documentFileName"
+                                                    class="d-block"
+                                                >
+                                                    -
+                                                </strong>
+
+
+                                                <small
+                                                    id="documentFileSize"
+                                                    class="text-secondary"
+                                                >
+                                                    -
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 BOTÓN
+                            ================================== -->
+
+                            <button
+                                id="documentTranslateButton"
+                                class="send-button"
+                                type="submit"
+                                disabled
+                            >
+                                Traducir documento
+                            </button>
+
+
+                            <div
+                                id="documentFormMessage"
+                                class="form-message"
+                                role="alert"
+                            ></div>
+
+                        </div>
+
+                    </form>
+
+
+                    <!-- =========================================
+                         RESULTADOS
+                    ========================================== -->
+
+                    <div
+                        id="documentResults"
+                        class="input-section border-top d-none"
+                    >
+
+                        <!-- =====================================
+                             ARCHIVO
+                        ====================================== -->
+
+                        <div class="mb-3">
+
+                            <small class="text-secondary">
+                                Documento procesado
+                            </small>
+
+                            <strong
+                                id="processedDocumentName"
+                                class="d-block"
+                            >
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             TEXTO ORIGINAL
+                        ====================================== -->
+
+                        <div class="mb-4">
+
+                            <h3 class="h6">
+                                Texto original
+                            </h3>
+
+                            <div
+                                class="card border-0 bg-light"
+                            >
+
+                                <div class="card-body">
+
+                                    <p
+                                        id="documentOriginalText"
+                                        class="mb-0"
+                                        style="white-space: pre-wrap;"
+                                    ></p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             TRADUCCIÓN
+                        ====================================== -->
+
+                        <div class="mb-4">
+
+                            <h3 class="h6">
+                                Traducción
+                            </h3>
+
+                            <div
+                                class="card border-0 bg-light"
+                            >
+
+                                <div class="card-body">
+
+                                    <p
+                                        id="documentTranslatedText"
+                                        class="mb-0"
+                                        style="white-space: pre-wrap;"
+                                    ></p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             IDIOMA DETECTADO
+                        ====================================== -->
+
+                        <div class="row g-3">
+
+                            <div class="col-md-12">
+
+                                <div
+                                    class="card border-0 bg-light h-100"
+                                >
+
+                                    <div class="card-body">
+
+                                        <small
+                                            class="text-secondary d-block"
+                                        >
+                                            Idioma detectado
+                                        </small>
+
+                                        <strong
+                                            id="detectedDocumentLanguage"
+                                        >
+                                            -
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             ADVERTENCIA
+                        ====================================== -->
+
+                        <div
+                            id="documentWarning"
+                            class="alert alert-warning mt-3 mb-0 d-none"
+                            role="alert"
+                        ></div>
+
+                    </div>
 
                 </div>
 
@@ -609,9 +1000,7 @@
                                         class="text-center text-secondary py-5"
                                     >
 
-                                        <div
-                                            class="fs-1 mb-2"
-                                        >
+                                        <div class="fs-1 mb-2">
                                             🖼️
                                         </div>
 
@@ -683,8 +1072,7 @@
                                     <p
                                         id="detectedImageText"
                                         class="mb-0"
-                                    >
-                                    </p>
+                                    ></p>
 
                                 </div>
 
@@ -708,8 +1096,7 @@
                                     <p
                                         id="translatedImageText"
                                         class="mb-0"
-                                    >
-                                    </p>
+                                    ></p>
 
                                 </div>
 
@@ -788,8 +1175,7 @@
                             id="imageWarning"
                             class="alert alert-warning mt-3 mb-0 d-none"
                             role="alert"
-                        >
-                        </div>
+                        ></div>
 
                     </div>
 

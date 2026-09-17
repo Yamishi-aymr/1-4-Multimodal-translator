@@ -8,20 +8,38 @@ const CHAT_API_URL =
 const IMAGE_API_URL =
     "https://1-4-multimodal-translator.vercel.app/api/image";
 
+const DOCUMENT_API_URL =
+    "https://1-4-multimodal-translator.vercel.app/api/document";
 
-const MAX_MESSAGE_LENGTH =
-    2000;
 
-const MAX_HISTORY_MESSAGES =
-    8;
+const MAX_MESSAGE_LENGTH = 2000;
+const MAX_HISTORY_MESSAGES = 8;
 
 const MAX_IMAGE_SIZE =
     3 * 1024 * 1024;
+
+const MAX_DOCUMENT_SIZE =
+    2 * 1024 * 1024;
+
 
 const ALLOWED_IMAGE_TYPES = [
     "image/jpeg",
     "image/png",
     "image/webp"
+];
+
+
+const ALLOWED_DOCUMENT_EXTENSIONS = [
+    ".pdf",
+    ".txt",
+    ".docx"
+];
+
+
+const ALLOWED_DOCUMENT_TYPES = [
+    "application/pdf",
+    "text/plain",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 ];
 
 
@@ -125,7 +143,6 @@ class TranslationChatApp {
                 this.handleSubmit(
                     event
                 );
-
             }
         );
 
@@ -135,7 +152,6 @@ class TranslationChatApp {
             () => {
 
                 this.updateCharacterCounter();
-
             }
         );
 
@@ -152,9 +168,7 @@ class TranslationChatApp {
                     event.preventDefault();
 
                     this.form.requestSubmit();
-
                 }
-
             }
         );
 
@@ -164,7 +178,6 @@ class TranslationChatApp {
             () => {
 
                 this.swapLanguages();
-
             }
         );
 
@@ -174,7 +187,6 @@ class TranslationChatApp {
             () => {
 
                 this.handleSourceLanguageChange();
-
             }
         );
 
@@ -184,7 +196,6 @@ class TranslationChatApp {
             () => {
 
                 this.handleTargetLanguageChange();
-
             }
         );
 
@@ -194,7 +205,6 @@ class TranslationChatApp {
             () => {
 
                 this.resetConversation();
-
             }
         );
 
@@ -267,7 +277,6 @@ class TranslationChatApp {
         this.sourceLanguage.value =
             this.targetLanguage.value;
 
-
         this.targetLanguage.value =
             source;
 
@@ -279,7 +288,7 @@ class TranslationChatApp {
 
 
     /* ========================================================
-       DIRECCIÓN DE TRADUCCIÓN
+       DIRECCIÓN
     ======================================================== */
 
     updateLanguageDirection() {
@@ -288,7 +297,6 @@ class TranslationChatApp {
             this.languageNames[
                 this.sourceLanguage.value
             ];
-
 
         const targetName =
             this.languageNames[
@@ -353,7 +361,7 @@ class TranslationChatApp {
 
 
     /* ========================================================
-       MENSAJE DE ERROR
+       MENSAJE
     ======================================================== */
 
     showFormMessage(message = "") {
@@ -364,13 +372,12 @@ class TranslationChatApp {
 
 
     /* ========================================================
-       ENVIAR MENSAJE
+       ENVIAR
     ======================================================== */
 
     async handleSubmit(event) {
 
         event.preventDefault();
-
 
         this.showFormMessage();
 
@@ -378,10 +385,8 @@ class TranslationChatApp {
         const message =
             this.messageInput.value.trim();
 
-
         const source =
             this.sourceLanguage.value;
-
 
         const target =
             this.targetLanguage.value;
@@ -548,6 +553,7 @@ class TranslationChatApp {
 
 
             this.messageInput.focus();
+
         }
         catch (error) {
 
@@ -585,18 +591,14 @@ class TranslationChatApp {
         this.sendButton.disabled =
             isLoading;
 
-
         this.messageInput.disabled =
             isLoading;
-
 
         this.sourceLanguage.disabled =
             isLoading;
 
-
         this.targetLanguage.disabled =
             isLoading;
-
 
         this.swapButton.disabled =
             isLoading;
@@ -610,7 +612,7 @@ class TranslationChatApp {
 
 
     /* ========================================================
-       RENDERIZAR MENSAJE
+       RENDERIZAR
     ======================================================== */
 
     renderMessage(chatMessage) {
@@ -646,10 +648,6 @@ class TranslationChatApp {
         card.className =
             "message-card";
 
-
-        /* ====================================================
-           CABECERA
-        ==================================================== */
 
         const header =
             document.createElement(
@@ -705,10 +703,6 @@ class TranslationChatApp {
         );
 
 
-        /* ====================================================
-           ORIGINAL
-        ==================================================== */
-
         const originalSection =
             this.createMessageSection(
                 "Original",
@@ -716,10 +710,6 @@ class TranslationChatApp {
                 false
             );
 
-
-        /* ====================================================
-           TRADUCCIÓN
-        ==================================================== */
 
         const translationSection =
             this.createMessageSection(
@@ -733,11 +723,9 @@ class TranslationChatApp {
             header
         );
 
-
         card.appendChild(
             originalSection
         );
-
 
         card.appendChild(
             translationSection
@@ -790,7 +778,6 @@ class TranslationChatApp {
         labelElement.className =
             "message-label";
 
-
         labelElement.textContent =
             label;
 
@@ -804,7 +791,6 @@ class TranslationChatApp {
         textElement.className =
             "message-text";
 
-
         textElement.textContent =
             text;
 
@@ -812,7 +798,6 @@ class TranslationChatApp {
         section.appendChild(
             labelElement
         );
-
 
         section.appendChild(
             textElement
@@ -1006,7 +991,6 @@ class ImageTranslationApp {
             () => {
 
                 this.handleImageSelection();
-
             }
         );
 
@@ -1018,7 +1002,6 @@ class ImageTranslationApp {
                 this.handleSubmit(
                     event
                 );
-
             }
         );
 
@@ -1028,7 +1011,6 @@ class ImageTranslationApp {
             () => {
 
                 this.swapLanguages();
-
             }
         );
 
@@ -1038,7 +1020,6 @@ class ImageTranslationApp {
             () => {
 
                 this.handleSourceLanguageChange();
-
             }
         );
 
@@ -1048,7 +1029,6 @@ class ImageTranslationApp {
             () => {
 
                 this.handleTargetLanguageChange();
-
             }
         );
 
@@ -1056,10 +1036,6 @@ class ImageTranslationApp {
         this.updateLanguageDirection();
     }
 
-
-    /* ========================================================
-       CAMBIO DE IDIOMA ORIGEN
-    ======================================================== */
 
     handleSourceLanguageChange() {
 
@@ -1081,10 +1057,6 @@ class ImageTranslationApp {
     }
 
 
-    /* ========================================================
-       CAMBIO DE IDIOMA DESTINO
-    ======================================================== */
-
     handleTargetLanguageChange() {
 
         if (
@@ -1105,10 +1077,6 @@ class ImageTranslationApp {
     }
 
 
-    /* ========================================================
-       INTERCAMBIAR IDIOMAS
-    ======================================================== */
-
     swapLanguages() {
 
         const source =
@@ -1117,7 +1085,6 @@ class ImageTranslationApp {
 
         this.sourceLanguage.value =
             this.targetLanguage.value;
-
 
         this.targetLanguage.value =
             source;
@@ -1129,17 +1096,12 @@ class ImageTranslationApp {
     }
 
 
-    /* ========================================================
-       ACTUALIZAR DIRECCIÓN
-    ======================================================== */
-
     updateLanguageDirection() {
 
         const sourceName =
             this.languageNames[
                 this.sourceLanguage.value
             ];
-
 
         const targetName =
             this.languageNames[
@@ -1195,10 +1157,6 @@ class ImageTranslationApp {
         }
 
 
-        /* ====================================================
-           VALIDAR TIPO
-        ==================================================== */
-
         if (
             !ALLOWED_IMAGE_TYPES.includes(
                 file.type
@@ -1213,14 +1171,9 @@ class ImageTranslationApp {
             this.fileInput.value =
                 "";
 
-
             return;
         }
 
-
-        /* ====================================================
-           VALIDAR TAMAÑO
-        ==================================================== */
 
         if (
             file.size >
@@ -1234,7 +1187,6 @@ class ImageTranslationApp {
 
             this.fileInput.value =
                 "";
-
 
             return;
         }
@@ -1252,14 +1204,9 @@ class ImageTranslationApp {
             this.fileInput.value =
                 "";
 
-
             return;
         }
 
-
-        /* ====================================================
-           LEER ARCHIVO
-        ==================================================== */
 
         const reader =
             new FileReader();
@@ -1334,7 +1281,6 @@ class ImageTranslationApp {
 
         event.preventDefault();
 
-
         this.showFormMessage();
 
         this.clearResults();
@@ -1352,7 +1298,6 @@ class ImageTranslationApp {
 
         const source =
             this.sourceLanguage.value;
-
 
         const target =
             this.targetLanguage.value;
@@ -1438,10 +1383,6 @@ class ImageTranslationApp {
             }
 
 
-            /* =================================================
-               IMAGEN SIN TEXTO
-            ================================================= */
-
             if (!data.has_text) {
 
                 this.results.classList.remove(
@@ -1486,10 +1427,6 @@ class ImageTranslationApp {
                 return;
             }
 
-
-            /* =================================================
-               RESULTADO EXITOSO
-            ================================================= */
 
             this.results.classList.remove(
                 "d-none"
@@ -1549,11 +1486,941 @@ class ImageTranslationApp {
                 block:
                     "nearest"
             });
+
         }
         catch (error) {
 
             console.error(
                 "Error al traducir imagen:",
+                error
+            );
+
+
+            this.showFormMessage(
+                error.message
+            );
+
+
+            this.setStatus(
+                "error",
+                "Error"
+            );
+        }
+        finally {
+
+            this.setLoading(
+                false
+            );
+        }
+    }
+
+
+    setLoading(isLoading) {
+
+        this.fileInput.disabled =
+            isLoading;
+
+        this.sourceLanguage.disabled =
+            isLoading;
+
+        this.targetLanguage.disabled =
+            isLoading;
+
+        this.swapButton.disabled =
+            isLoading;
+
+
+        this.translateButton.disabled =
+            isLoading ||
+            !this.imageData;
+
+
+        this.translateButton.textContent =
+            isLoading
+                ? "Analizando y traduciendo..."
+                : "Traducir imagen";
+    }
+
+
+    clearResults() {
+
+        this.results.classList.add(
+            "d-none"
+        );
+
+
+        this.detectedText.textContent =
+            "";
+
+        this.translatedText.textContent =
+            "";
+
+        this.detectedLanguage.textContent =
+            "-";
+
+        this.confidence.textContent =
+            "-";
+
+
+        this.hideWarning();
+    }
+
+
+    showWarning(message) {
+
+        this.warning.textContent =
+            message;
+
+        this.warning.classList.remove(
+            "d-none"
+        );
+    }
+
+
+    hideWarning() {
+
+        this.warning.textContent =
+            "";
+
+        this.warning.classList.add(
+            "d-none"
+        );
+    }
+
+
+    showFormMessage(message = "") {
+
+        this.formMessage.textContent =
+            message;
+    }
+
+
+    setStatus(
+        type,
+        message
+    ) {
+
+        this.statusIndicator.classList.remove(
+            "loading",
+            "error"
+        );
+
+
+        if (type === "loading") {
+
+            this.statusIndicator.classList.add(
+                "loading"
+            );
+        }
+
+
+        if (type === "error") {
+
+            this.statusIndicator.classList.add(
+                "error"
+            );
+        }
+
+
+        this.statusText.textContent =
+            message;
+    }
+}
+
+
+/* ============================================================
+   CLASE PARA TRADUCCIÓN DE DOCUMENTOS
+============================================================ */
+
+class DocumentTranslationApp {
+
+    constructor() {
+
+        this.form =
+            document.getElementById(
+                "documentForm"
+            );
+
+        this.fileInput =
+            document.getElementById(
+                "documentInput"
+            );
+
+        this.sourceLanguage =
+            document.getElementById(
+                "documentSourceLanguage"
+            );
+
+        this.targetLanguage =
+            document.getElementById(
+                "documentTargetLanguage"
+            );
+
+        this.swapButton =
+            document.getElementById(
+                "documentSwapLanguagesButton"
+            );
+
+        this.translationDirection =
+            document.getElementById(
+                "documentTranslationDirection"
+            );
+
+        this.translateButton =
+            document.getElementById(
+                "documentTranslateButton"
+            );
+
+        this.formMessage =
+            document.getElementById(
+                "documentFormMessage"
+            );
+
+
+        /* ====================================================
+           INFORMACIÓN DEL ARCHIVO
+        ==================================================== */
+
+        this.filePlaceholder =
+            document.getElementById(
+                "documentFilePlaceholder"
+            );
+
+        this.fileInfo =
+            document.getElementById(
+                "documentFileInfo"
+            );
+
+        this.fileName =
+            document.getElementById(
+                "documentFileName"
+            );
+
+        this.fileSize =
+            document.getElementById(
+                "documentFileSize"
+            );
+
+
+        /* ====================================================
+           RESULTADOS
+        ==================================================== */
+
+        this.results =
+            document.getElementById(
+                "documentResults"
+            );
+
+        this.processedFileName =
+            document.getElementById(
+                "processedDocumentName"
+            );
+
+        this.originalText =
+            document.getElementById(
+                "documentOriginalText"
+            );
+
+        this.translatedText =
+            document.getElementById(
+                "documentTranslatedText"
+            );
+
+        this.detectedLanguage =
+            document.getElementById(
+                "detectedDocumentLanguage"
+            );
+
+        this.warning =
+            document.getElementById(
+                "documentWarning"
+            );
+
+
+        /* ====================================================
+           ESTADO GLOBAL
+        ==================================================== */
+
+        this.statusText =
+            document.getElementById(
+                "statusText"
+            );
+
+        this.statusIndicator =
+            document.getElementById(
+                "statusIndicator"
+            );
+
+
+        this.fileData =
+            "";
+
+        this.selectedFile =
+            null;
+
+
+        this.languageNames = {
+            es: "Español",
+            en: "English",
+            unknown: "No identificado"
+        };
+
+
+        this.initialize();
+    }
+
+
+    /* ========================================================
+       INICIALIZAR
+    ======================================================== */
+
+    initialize() {
+
+        this.fileInput.addEventListener(
+            "change",
+            () => {
+
+                this.handleFileSelection();
+            }
+        );
+
+
+        this.form.addEventListener(
+            "submit",
+            (event) => {
+
+                this.handleSubmit(
+                    event
+                );
+            }
+        );
+
+
+        this.swapButton.addEventListener(
+            "click",
+            () => {
+
+                this.swapLanguages();
+            }
+        );
+
+
+        this.sourceLanguage.addEventListener(
+            "change",
+            () => {
+
+                this.handleSourceLanguageChange();
+            }
+        );
+
+
+        this.targetLanguage.addEventListener(
+            "change",
+            () => {
+
+                this.handleTargetLanguageChange();
+            }
+        );
+
+
+        this.updateLanguageDirection();
+    }
+
+
+    /* ========================================================
+       IDIOMA ORIGEN
+    ======================================================== */
+
+    handleSourceLanguageChange() {
+
+        if (
+            this.sourceLanguage.value ===
+            this.targetLanguage.value
+        ) {
+
+            this.targetLanguage.value =
+                this.sourceLanguage.value === "es"
+                    ? "en"
+                    : "es";
+        }
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       IDIOMA DESTINO
+    ======================================================== */
+
+    handleTargetLanguageChange() {
+
+        if (
+            this.sourceLanguage.value ===
+            this.targetLanguage.value
+        ) {
+
+            this.sourceLanguage.value =
+                this.targetLanguage.value === "es"
+                    ? "en"
+                    : "es";
+        }
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       INTERCAMBIAR IDIOMAS
+    ======================================================== */
+
+    swapLanguages() {
+
+        const source =
+            this.sourceLanguage.value;
+
+
+        this.sourceLanguage.value =
+            this.targetLanguage.value;
+
+        this.targetLanguage.value =
+            source;
+
+
+        this.updateLanguageDirection();
+
+        this.clearResults();
+    }
+
+
+    /* ========================================================
+       DIRECCIÓN
+    ======================================================== */
+
+    updateLanguageDirection() {
+
+        const sourceName =
+            this.languageNames[
+                this.sourceLanguage.value
+            ];
+
+        const targetName =
+            this.languageNames[
+                this.targetLanguage.value
+            ];
+
+
+        this.translationDirection.textContent =
+            `${sourceName} → ${targetName}`;
+    }
+
+
+    /* ========================================================
+       SELECCIONAR DOCUMENTO
+    ======================================================== */
+
+    handleFileSelection() {
+
+        this.showFormMessage();
+
+        this.clearResults();
+
+        this.resetSelectedFile();
+
+
+        const file =
+            this.fileInput.files[0];
+
+
+        if (!file) {
+
+            return;
+        }
+
+
+        const extension =
+            this.getFileExtension(
+                file.name
+            );
+
+
+        /* ====================================================
+           VALIDAR EXTENSIÓN
+        ==================================================== */
+
+        if (
+            !ALLOWED_DOCUMENT_EXTENSIONS.includes(
+                extension
+            )
+        ) {
+
+            this.showFormMessage(
+                "Formato no permitido. Usa PDF, TXT o DOCX."
+            );
+
+
+            this.fileInput.value =
+                "";
+
+            return;
+        }
+
+
+        /* ====================================================
+           VALIDAR TAMAÑO
+        ==================================================== */
+
+        if (
+            file.size >
+            MAX_DOCUMENT_SIZE
+        ) {
+
+            this.showFormMessage(
+                "El documento debe pesar como máximo 2 MB."
+            );
+
+
+            this.fileInput.value =
+                "";
+
+            return;
+        }
+
+
+        if (
+            file.size === 0
+        ) {
+
+            this.showFormMessage(
+                "El documento seleccionado está vacío."
+            );
+
+
+            this.fileInput.value =
+                "";
+
+            return;
+        }
+
+
+        /* ====================================================
+           LEER DOCUMENTO
+        ==================================================== */
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            () => {
+
+                this.fileData =
+                    reader.result;
+
+                this.selectedFile =
+                    file;
+
+
+                this.showFileInformation(
+                    file
+                );
+
+
+                this.translateButton.disabled =
+                    false;
+
+
+                this.setStatus(
+                    "ready",
+                    "Documento listo"
+                );
+            };
+
+
+        reader.onerror =
+            () => {
+
+                this.resetSelectedFile();
+
+
+                this.fileInput.value =
+                    "";
+
+
+                this.showFormMessage(
+                    "No fue posible leer el documento seleccionado."
+                );
+
+
+                this.setStatus(
+                    "error",
+                    "Error"
+                );
+            };
+
+
+        reader.readAsDataURL(
+            file
+        );
+    }
+
+
+    /* ========================================================
+       EXTENSIÓN
+    ======================================================== */
+
+    getFileExtension(filename) {
+
+        const lastDot =
+            filename.lastIndexOf(".");
+
+
+        if (lastDot === -1) {
+
+            return "";
+        }
+
+
+        return filename
+            .slice(lastDot)
+            .toLowerCase();
+    }
+
+
+    /* ========================================================
+       INFORMACIÓN DEL DOCUMENTO
+    ======================================================== */
+
+    showFileInformation(file) {
+
+        this.filePlaceholder.classList.add(
+            "d-none"
+        );
+
+
+        this.fileInfo.classList.remove(
+            "d-none"
+        );
+
+
+        this.fileName.textContent =
+            file.name;
+
+
+        this.fileSize.textContent =
+            this.formatFileSize(
+                file.size
+            );
+    }
+
+
+    /* ========================================================
+       FORMATEAR TAMAÑO
+    ======================================================== */
+
+    formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+
+            return `${bytes} bytes`;
+        }
+
+
+        if (
+            bytes <
+            1024 * 1024
+        ) {
+
+            return `${
+                (
+                    bytes / 1024
+                ).toFixed(1)
+            } KB`;
+        }
+
+
+        return `${
+            (
+                bytes /
+                (1024 * 1024)
+            ).toFixed(2)
+        } MB`;
+    }
+
+
+    /* ========================================================
+       RESTABLECER ARCHIVO
+    ======================================================== */
+
+    resetSelectedFile() {
+
+        this.fileData =
+            "";
+
+        this.selectedFile =
+            null;
+
+
+        this.translateButton.disabled =
+            true;
+
+
+        this.fileInfo.classList.add(
+            "d-none"
+        );
+
+
+        this.filePlaceholder.classList.remove(
+            "d-none"
+        );
+
+
+        this.fileName.textContent =
+            "-";
+
+        this.fileSize.textContent =
+            "-";
+    }
+
+
+    /* ========================================================
+       ENVIAR DOCUMENTO
+    ======================================================== */
+
+    async handleSubmit(event) {
+
+        event.preventDefault();
+
+        this.showFormMessage();
+
+        this.clearResults();
+
+
+        if (
+            !this.fileData ||
+            !this.selectedFile
+        ) {
+
+            this.showFormMessage(
+                "Selecciona un documento antes de traducir."
+            );
+
+            return;
+        }
+
+
+        const source =
+            this.sourceLanguage.value;
+
+        const target =
+            this.targetLanguage.value;
+
+
+        if (source === target) {
+
+            this.showFormMessage(
+                "El idioma de origen y destino deben ser diferentes."
+            );
+
+            return;
+        }
+
+
+        this.setLoading(
+            true
+        );
+
+
+        this.setStatus(
+            "loading",
+            "Analizando documento..."
+        );
+
+
+        try {
+
+            const validMimeType =
+                ALLOWED_DOCUMENT_TYPES.includes(
+                    this.selectedFile.type
+                )
+                    ? this.selectedFile.type
+                    : "";
+
+
+            const response =
+                await fetch(
+                    DOCUMENT_API_URL,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                file_data:
+                                    this.fileData,
+
+                                filename:
+                                    this.selectedFile.name,
+
+                                mime_type:
+                                    validMimeType,
+
+                                source_language:
+                                    source,
+
+                                target_language:
+                                    target
+                            })
+                    }
+                );
+
+
+            let data;
+
+
+            try {
+
+                data =
+                    await response.json();
+
+            }
+            catch {
+
+                throw new Error(
+                    "El servidor devolvió una respuesta no válida."
+                );
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    "No fue posible traducir el documento."
+                );
+            }
+
+
+            /* =================================================
+               DOCUMENTO SIN TEXTO
+            ================================================= */
+
+            if (!data.has_text) {
+
+                this.results.classList.remove(
+                    "d-none"
+                );
+
+
+                this.processedFileName.textContent =
+                    data.filename ||
+                    this.selectedFile.name;
+
+
+                this.originalText.textContent =
+                    "No se encontró texto legible en el documento.";
+
+
+                this.translatedText.textContent =
+                    "No hay contenido disponible para traducir.";
+
+
+                this.detectedLanguage.textContent =
+                    this.languageNames[
+                        data.detected_language
+                    ] ||
+                    "No identificado";
+
+
+                this.showWarning(
+                    data.warning ||
+                    "No se encontró texto legible en el documento."
+                );
+
+
+                this.setStatus(
+                    "ready",
+                    "Análisis terminado"
+                );
+
+
+                this.scrollToResults();
+
+                return;
+            }
+
+
+            /* =================================================
+               RESULTADO EXITOSO
+            ================================================= */
+
+            this.results.classList.remove(
+                "d-none"
+            );
+
+
+            this.processedFileName.textContent =
+                data.filename ||
+                this.selectedFile.name;
+
+
+            this.originalText.textContent =
+                data.original_text ||
+                "No se recibió el texto original.";
+
+
+            this.translatedText.textContent =
+                data.translation ||
+                "No se recibió una traducción.";
+
+
+            this.detectedLanguage.textContent =
+                this.languageNames[
+                    data.detected_language
+                ] ||
+                "No identificado";
+
+
+            if (
+                data.warning &&
+                data.warning.trim()
+            ) {
+
+                this.showWarning(
+                    data.warning
+                );
+
+            }
+            else {
+
+                this.hideWarning();
+            }
+
+
+            this.setStatus(
+                "ready",
+                "Documento traducido"
+            );
+
+
+            this.scrollToResults();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error al traducir documento:",
                 error
             );
 
@@ -1586,14 +2453,11 @@ class ImageTranslationApp {
         this.fileInput.disabled =
             isLoading;
 
-
         this.sourceLanguage.disabled =
             isLoading;
 
-
         this.targetLanguage.disabled =
             isLoading;
-
 
         this.swapButton.disabled =
             isLoading;
@@ -1601,13 +2465,14 @@ class ImageTranslationApp {
 
         this.translateButton.disabled =
             isLoading ||
-            !this.imageData;
+            !this.fileData ||
+            !this.selectedFile;
 
 
         this.translateButton.textContent =
             isLoading
                 ? "Analizando y traduciendo..."
-                : "Traducir imagen";
+                : "Traducir documento";
     }
 
 
@@ -1622,19 +2487,16 @@ class ImageTranslationApp {
         );
 
 
-        this.detectedText.textContent =
-            "";
+        this.processedFileName.textContent =
+            "-";
 
+        this.originalText.textContent =
+            "";
 
         this.translatedText.textContent =
             "";
 
-
         this.detectedLanguage.textContent =
-            "-";
-
-
-        this.confidence.textContent =
             "-";
 
 
@@ -1671,13 +2533,29 @@ class ImageTranslationApp {
 
 
     /* ========================================================
-       MENSAJE DE FORMULARIO
+       MENSAJE
     ======================================================== */
 
     showFormMessage(message = "") {
 
         this.formMessage.textContent =
             message;
+    }
+
+
+    /* ========================================================
+       RESULTADOS
+    ======================================================== */
+
+    scrollToResults() {
+
+        this.results.scrollIntoView({
+            behavior:
+                "smooth",
+
+            block:
+                "nearest"
+        });
     }
 
 
@@ -1730,6 +2608,12 @@ function initializeModeNavigation() {
         );
 
 
+    const documentModeButton =
+        document.getElementById(
+            "documentModeButton"
+        );
+
+
     const imageModeButton =
         document.getElementById(
             "imageModeButton"
@@ -1748,6 +2632,19 @@ function initializeModeNavigation() {
         );
 
 
+    function resetStatus(message) {
+
+        statusIndicator.classList.remove(
+            "loading",
+            "error"
+        );
+
+
+        statusText.textContent =
+            message;
+    }
+
+
     if (
         chatModeButton &&
         statusText &&
@@ -1758,14 +2655,27 @@ function initializeModeNavigation() {
             "shown.bs.tab",
             () => {
 
-                statusIndicator.classList.remove(
-                    "loading",
-                    "error"
+                resetStatus(
+                    "IA disponible"
                 );
+            }
+        );
+    }
 
 
-                statusText.textContent =
-                    "IA disponible";
+    if (
+        documentModeButton &&
+        statusText &&
+        statusIndicator
+    ) {
+
+        documentModeButton.addEventListener(
+            "shown.bs.tab",
+            () => {
+
+                resetStatus(
+                    "Traductor de documentos disponible"
+                );
             }
         );
     }
@@ -1781,14 +2691,9 @@ function initializeModeNavigation() {
             "shown.bs.tab",
             () => {
 
-                statusIndicator.classList.remove(
-                    "loading",
-                    "error"
+                resetStatus(
+                    "Traductor de imágenes disponible"
                 );
-
-
-                statusText.textContent =
-                    "Traductor de imágenes disponible";
             }
         );
     }
@@ -1806,6 +2711,8 @@ document.addEventListener(
         new TranslationChatApp();
 
         new ImageTranslationApp();
+
+        new DocumentTranslationApp();
 
         initializeModeNavigation();
     }
